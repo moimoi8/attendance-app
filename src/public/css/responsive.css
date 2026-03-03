@@ -1,0 +1,14 @@
+@media screen and (max-width: 1540px) {
+  .header__logo-img {
+    width: 24vw;
+    min-width: 280px;
+  }
+  .header__nav-list {
+    gap: 3vw;
+  }
+  .header__nav-link,
+  .logout__link {
+    font-size: 1.5vw;
+    min-size: 18px
+  }
+}
