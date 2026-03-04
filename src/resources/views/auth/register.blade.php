@@ -3,6 +3,11 @@
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
+<style>
+  body {
+    background-color: #ffffff;
+  }
+</style>
 @endsection
 
 @section('content')
