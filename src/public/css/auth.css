@@ -1,0 +1,30 @@
+.register-form__group,
+.login-form__group {
+  margin-bottom: 25px;
+}
+
+.register-form__btn-wrap {
+  margin-top: 90px;
+}
+
+.login-form__btn-wrap {
+  margin-top: 90px;
+}
+
+.register-form .c-form-input {
+  height: 45px;
+}
+
+.register-form__link,
+.login-form__link {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.register-form__link a,
+.login-form__link a {
+  color: #0073cc;
+  text-decoration: none;
+  font-size: 20px;
+}
+
