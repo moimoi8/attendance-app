@@ -58,3 +58,41 @@
     font-size: 24px;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .attendance-detail__table {
+    height: auto;
+  }
+
+  .attendance-detail__row {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 20px;
+    height: auto !important;
+  }
+
+  .attendance-detail__label {
+    margin-left: 0;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .attendance-detail__content {
+    margin-left: 0;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .attendance-detail__value {
+    width: auto;
+  }
+
+  .attendance-detail__item {
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+
+  .attendance-detail__link {
+    font-size: 14px;
+  }
+}

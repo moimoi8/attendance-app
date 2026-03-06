@@ -1,0 +1,29 @@
+.attendance-tabs {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.attendance-tabs__list {
+  display: flex;
+  list-style: none;
+  width: 100%;
+  max-width: 900px;
+  padding: 0;
+  margin: 0;
+  border-bottom: 1px solid #000000;
+}
+
+.attendance-tabs__item {
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.attendance-tabs__link {
+  display: inline-block;
+  padding-bottom: 10px;
+  text-decoration: none;
+  color: #000000;
+  font-size: 16px;
+  font-weight: bold;
+}
+
