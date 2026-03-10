@@ -19,7 +19,7 @@
     <div class="header__inner">
       <div class="header__logo">
         <a href="/" class="header__logo-link">
-          <img src="{{ asset('img/header-logo.png') }}" alt="COACHTECH" class="header__logo-img">
+          <img src="{{ asset('images/header-logo.png') }}" alt="COACHTECH" class="header__logo-img">
         </a>
       </div>
       @if( !in_array(Route::currentRouteName(), ['register', 'login']) )

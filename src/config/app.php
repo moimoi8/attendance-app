@@ -139,6 +139,8 @@ return [
     /*
          * Laravel Framework Service Providers...
          */
+    Laravel\Fortify\FortifyServiceProvider::class,
+    App\Providers\FortifyServiceProvider::class,
     Illuminate\Auth\AuthServiceProvider::class,
     Illuminate\Broadcasting\BroadcastServiceProvider::class,
     Illuminate\Bus\BusServiceProvider::class,
