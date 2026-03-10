@@ -59,7 +59,7 @@
           @endif
 
           <li class="header__nav-item">
-            <form action="/logout" method="post">
+            <form action="{{ route('logout') }}" method="POST">
               @csrf
               <button class="logout__link" type="submit">ログアウト</button>
             </form>

@@ -7,5 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rest extends Model
 {
-    use HasFactory;
+  use HasFactory;
+
+  protected $fillable = [
+    'attendance_id',
+    'start_time',
+    'end_time',
+  ];
 }

@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +16,29 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
 });
+
+Route::get('/login', [LoginController::class, 'showUserLoginForm'])->name('login');
+Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
+
+Route::middleware(['auth'])->group(function () {
+
+  Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.punch');
+  Route::post('/attendance/start', [AttendanceController::class, 'start'])->name('attendance.start');
+  Route::post('attendance/end', [AttendanceController::class, 'end'])->name('attendance.end');
+  Route::post('/rest/start', [AttendanceController::class, 'restStart'])->name('rest.start');
+  Route::post('/rest/end', [AttendanceController::class, 'restEnd'])->name('rest.end');
+});
+
+Route::get('/attendance/list', function () {
+  return view('attendance.list');
+})->name('attendance.list');
+
+Route::get('/attendance/detail/{id}', function ($id) {
+  return view('attendance.edit');
+})->name('attendance.detail');
+
+Route::get('/stamp_correction_request/list', function () {
+  return view('attendance.request_list');
+})->name('request.list');

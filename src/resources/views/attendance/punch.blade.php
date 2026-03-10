@@ -19,16 +19,32 @@
     @else
     <div class="punch__button-container">
       @if($status == 'off_duty')
-      <button class="punch__button punch__button--black">出勤</button>
+      <form action="{{ route('attendance.start') }}" method="POST">
+        @csrf
+        <button class="punch__button punch__button--black">出勤</button>
+      </form>
+
       @elseif($status == 'working')
-      <button class="punch__button punch__button--white">休憩入</button>
+      <form action="{{ route('attendance.end') }}" method="POST">
+        @csrf
+        <button class="punch__button punch__button--black">退勤</button>
+      </form>
+      <form action="{{ route('rest.start') }}" method="POST">
+        @csrf
+        <button class="punch__button punch__button--white">休憩入</button>
+      </form>
+
       @elseif($status == 'on_break')
-      <button class="punch__button punch__button--white">休憩戻</button>
+      <form action="{{ route('rest.end') }}" method="POST">
+        @csrf
+        <button class="punch__button punch__button--white">休憩戻</button>
+      </form>
       @endif
     </div>
     @endif
   </div>
 </div>
+@endsection
 
 <script>
   function updateDateTime() {
