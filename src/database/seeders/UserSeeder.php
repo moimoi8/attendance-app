@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
       'password' => Hash::make('password123'),
       'work_status_id' => 1,
       'email_verified_at' => now(),
+      'role' => 'user',
     ]);
   }
 }

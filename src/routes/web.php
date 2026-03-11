@@ -20,7 +20,11 @@ Route::get('/', function () {
 });
 
 Route::get('/login', [LoginController::class, 'showUserLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'store']);
+
 Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
+Route::post('/admin/login', [LoginController::class, 'store']);
+
 
 Route::middleware(['auth'])->group(function () {
 

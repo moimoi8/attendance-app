@@ -13,7 +13,7 @@ class ExemptRequest extends FormRequest
    */
   public function authorize()
   {
-    return false;
+    return true;
   }
 
   /**
@@ -24,7 +24,18 @@ class ExemptRequest extends FormRequest
   public function rules()
   {
     return [
-      //
+      'clock_in' => ['required'],
+      'clock_out' => ['required'],
+      'break_start' => ['required'],
+      'break_end' => ['required'],
+      'remarks' => ['required', 'string', 'max:255'],
+    ];
+  }
+
+  public function messages()
+  {
+    return [
+      'remarks.required' => '備考を記入してください',
     ];
   }
 
@@ -37,6 +48,12 @@ class ExemptRequest extends FormRequest
 
       if ($this->break_start < $this->clock_in || $this->break_start > $this->clock_out) {
         $validator->errors()->add('break_start', '休憩時間が不適切な値です');
+      }
+
+      if ($this->break_end && $this->clock_out) {
+        if ($this->break_end > $this->clock_out) {
+          $validator->errors()->add('break_end', '休憩時間もしくは退勤時間が不適切な値です');
+        }
       }
     });
   }

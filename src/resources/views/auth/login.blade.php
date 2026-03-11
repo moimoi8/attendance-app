@@ -17,7 +17,7 @@
   </h2>
 
   <div class=" login-form__inner">
-    <form action="{{ $isAdmin ? route('admin.login') : route('login') }}" class="login-form__form" method="post" novalidate>
+    <form action="{{ request()->fullUrl() }}" class="login-form__form" method="POST" novalidate>
       @csrf
 
       <div class="login-form__group">
