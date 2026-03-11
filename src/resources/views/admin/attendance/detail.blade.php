@@ -2,6 +2,7 @@
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/detail.css') }}">
+
 @endsection
 
 @section('content')
@@ -19,7 +20,7 @@
           <div class="attendance-detail__content">西 怜奈</div>
         </div>
 
-        <div class="attendance-detail__row attendance-detail__row--auto">
+        <div class="attendance-detail__row attendance-detail__row--label">
           <label class="attendance-detail__label">日付</label>
           <div class="attendance-detail__content">
             <span class="attendance-detail__value">2023年</span>
@@ -31,40 +32,40 @@
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">出勤・退勤</label>
           <div class="attendance-detail__content">
-            <span class="attendance-detail__value">09:00</span>
+            <input type="text" class="attendance-detail__input attendance-detail__value" value="09:00">
             <span class="attendance-detail__separator">～</span>
-            <span class="attendance-detail__value">18:00</span>
+            <input type="text" class="attendance-detail__input attendance-detail__value" value="20:00">
           </div>
         </div>
 
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">休憩</label>
           <div class="attendance-detail__content">
-            <span class="attendance-detail__value">12:00</span>
+            <input type="text" class="attendance-detail__input attendance-detail__value" value="09:00">
             <span class="attendance-detail__separator">～</span>
-            <span class="attendance-detail__value">13:00</span>
+            <input type="text" class="attendance-detail__input attendance-detail__value" value="20:00">
           </div>
         </div>
 
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">休憩2</label>
           <div class="attendance-detail__content">
-            <span class="attendance-detail__value">15:00</span>
+            <input type="text" class="attendance-detail__input attendance-detail__value" value="09:00">
             <span class="attendance-detail__separator">～</span>
-            <span class="attendance-detail__value">15:10</span>
+            <input type="text" class="attendance-detail__input attendance-detail__value" value="20:00">
           </div>
         </div>
 
         <div class="attendance-detail__row attendance-detail__row--note">
           <label class="attendance-detail__label">備考</label>
           <div class="attendance-detail__content">
-            <p class="attendance-detail__text">電車遅延のため</p>
+            <textarea class="attendance-detail__textarea">電車遅延のため</textarea>
           </div>
         </div>
+      </div>
 
-        <div class="attendance-detail__actions">
-          <x-black-button type="submit">承認</x-black-button>
-        </div>
+      <div class="attendance-detail__actions">
+        <x-black-button type="submit">修正</x-black-button>
       </div>
     </form>
   </div>

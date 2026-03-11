@@ -6,32 +6,39 @@
 
 @if($showDateNav ?? false)
 <div class="date-nav">
-  <a href="#" class="date-nav__btn date-nav__btn--prev">
+  <a href="{{ route('admin.attendance.daily', ['date' => \Carbon\Carbon::parse($date)->subDay()->format('Y-m-d')]) }}" class="date-nav__btn date-nav__btn--prev">
     <img src="{{ asset('images/arrow.png') }}" alt="" class="date-nav__arrow">
     <span class="date-nav__btn-text">前日</span>
   </a>
   <div class="date-nav__current">
-    <div class="date-nav__display">
+    <label class="date-nav__label">
       <img src="{{ asset('images/calendar-icon.png') }}" alt="" class="date-nav__icon">
-      <span class="date-nav_date-text">{{ \Carbon\Carbon::parse($date)->format('y/m/d') }}</span>
-    </div>
-    <input type="date" class="date-nav__input" value="2023-06-01">
+      <span class="date-nav__date-text">{{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}</span>
+      <input type="date" class="date-nav__input" value="{{ $date }}" style="display: none;">
+    </label>
   </div>
-  <a href="#" class="date-nav__btn date-nav__btn--next">
+  <a href="{{ route('admin.attendance.daily', ['date' => \Carbon\Carbon::parse($date)->addDay()->format('Y-m-d')]) }}" class="date-nav__btn date-nav__btn--next">
     <span class="date-nav__btn-text">翌日</span>
     <img src="{{ asset('images/arrow.png') }}" alt="" class="date-nav__arrow">
   </a>
 </div>
 @endif
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.querySelector('.date-nav__input');
+    const label = document.querySelector('.date-nav__label');
 
-document.addEventListener('DOMContentLoaded', () => {
-const dateInput = document.querySelector('.date-nav__input');
+    label.addEventListener('click', (e) => {
+      if (dateInput.showPicker) {
+        dateInput.showPicker();
+      }
+    });
 
-dateInput.addEventListener('change', (e) => {
-const selectedDate = e.target.value;
-
-if (selectedDate) {
-window.location.href = `/attendance/${selectedDate}`;
-}
-});
-});
+    dateInput.addEventListener('change', (e) => {
+      const selectedDate = e.target.value;
+      if (selectedDate) {
+        window.location.href = `/admin/attendance/list?date=${selectedDate}`;
+      }
+    });
+  });
+</script>

@@ -1,17 +1,13 @@
-@extends('layout.app')
-
-@section('css')
-<link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-@endsection
+@extends('layouts.app')
 
 @section('content')
 <div class="l-main-content">
   <div class="l-content-inner">
 
     @include('components.page-header', [
-    'title' => \Carbon\Carbon::parse($date)->format('y年n月j日') . 'の勤怠',
-    'showDateNav' => true
-    'date' => $date
+    'title' => \Carbon\Carbon::parse($date)->format('Y年n月j日') . 'の勤怠',
+    'showDateNav' => true,
+    'date' => $date,
     ])
 
     <x-attendance-table>
@@ -24,18 +20,22 @@
         <th class="attendance-table__header">詳細</th>
       </x-slot>
 
-      @foreach($attendances as $attendance)
+      @forelse($attendances as $attendance)
       <tr class="attendance-table__row">
-        <td class="attendance-table__item">山田 太郎</td>
-        <td class="attendance-table__item">09：00</td>
-        <td class="attendance-table__item">18：00</td>
+        <td class="attendance-table__item">{{ $attendance->user->name }}</td>
+        <td class="attendance-table__item">{{ substr($attendance->clock_in, 0, 5) }}</td>
+        <td class="attendance-table__item">{{ substr($attendance->clock_out, 0, 5) }}</td>
         <td class="attendance-table__item">1：00</td>
         <td class="attendance-table__item">8：00</td>
         <td class="attendance-table__item">
-          <a href="#" class="attendance-table__link">詳細</a>
+          <a href="{{ route('admin.attendance.detail', ['id' => $attendance->id]) }}" class="attendance-table__link">詳細</a>
         </td>
       </tr>
-      @endforeach
+      @empty
+      <tr>
+        <td colspan="6" style="text-align: center;">本日の勤怠データはありません</td>
+      </tr>
+      @endforelse
     </x-attendance-table>
   </div>
 </div>

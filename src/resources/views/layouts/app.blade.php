@@ -23,37 +23,37 @@
         </a>
       </div>
       @if( !in_array(Route::currentRouteName(), ['register', 'login']) )
-      @auth
 
       <nav class="header__nav">
         <ul class="header__nav-list">
+          @auth
           @if(Auth::user()->isAdmin())
           <li class="header__nav-item">
-            <a href="/admin/attendance" class="header__nav-link">勤怠一覧</a>
+            <a href="{{ route('admin.attendance.daily') }}" class="header__nav-link">勤怠一覧</a>
           </li>
           <li class="header__nav-item">
-            <a href="/admin/staff" class="header__nav-link">スタッフ一覧</a>
+            <a href="{{ route('admin.staff.list') }}" class="header__nav-link">スタッフ一覧</a>
           </li>
           <li class="header__nav-item">
-            <a href="/admin/requests" class="header__nav-link">申請一覧</a>
+            <a href="{{ route('admin.approve.list') }}" class="header__nav-link">申請一覧</a>
           </li>
           @else
           @if(Route::currentRouteName() == 'attendance.clockout')
           <li class="header__nav-item">
-            <a href="/attendance/monthly" class="header__nav-link">今月の出勤一覧</a>
+            <a href="{{ route('attendance.list') }}" class="header__nav-link">今月の出勤一覧</a>
           </li>
           <li class="header__nav-item">
-            <a href="/requests" class="header__nav-link">申請一覧</a>
+            <a href="{{ route('request.list') }}" class="header__nav-link">申請一覧</a>
           </li>
           @else
           <li class="header__nav-item">
-            <a href="/attendance" class="header__nav-link">勤怠</a>
+            <a href="{{ route('attendance.punch') }}" class="header__nav-link">勤怠</a>
           </li>
           <li class="header__nav-item">
-            <a href="/attendance/list" class="header__nav-link">勤怠一覧</a>
+            <a href="{{ route('attendance.list') }}" class="header__nav-link">勤怠一覧</a>
           </li>
           <li class="header__nav-item">
-            <a href="/requests" class="header__nav-link">申請</a>
+            <a href="{{ route('request.list') }}" class="header__nav-link">申請</a>
           </li>
           @endif
           @endif
