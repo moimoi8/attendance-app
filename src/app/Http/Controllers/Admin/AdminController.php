@@ -26,4 +26,15 @@ class AdminController extends Controller
   {
     return view('admin.approve.list');
   }
+
+  public function show($id)
+  {
+    $attendance = Attendance::with(['user', 'rests'])->findOrFail($id);
+
+    if (!$attendance) {
+      abort(404);
+    }
+
+    return view('admin.attendance.detail', compact('attendance'));
+  }
 }

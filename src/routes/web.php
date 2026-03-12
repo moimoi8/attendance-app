@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Models\Attendance;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,21 +43,19 @@ Route::middleware(['auth'])->group(function () {
     return view('attendance.list');
   })->name('attendance.list');
 
-  Route::get('/attendance/detail/{id}', function ($id) {
-    return view('attendance.edit');
-  })->name('attendance.detail');
+  Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])->name('attendance.detail');
 
   Route::get('/stamp_correction_request/list', function () {
     return view('attendance.request_list');
   })->name('request.list');
 
+  Route::patch('/attendance/update/{id}', [AttendanceController::class, 'update'])->name('attendance.update');
+
 
   Route::prefix('admin')->group(function () {
     Route::get('/attendance/list', [AdminController::class, 'index'])->name('admin.attendance.daily');
 
-    Route::get('/attendance/{id}', function ($id) {
-      return view('admin.attendance.detail');
-    })->name('admin.attendance.detail');
+    Route::get('/admin/attendance/{id}', [AdminController::class, 'show'])->name('admin.attendance.detail');
 
     Route::get('/staff/list', [AdminController::class, 'staffList'])->name('admin.staff.list');
 
@@ -70,4 +69,6 @@ Route::middleware(['auth'])->group(function () {
       return view('admin.approve.detail');
     })->name('admin.approve.detail');
   });
+
+  Route::patch('/admin/attendance/update/{id}', [AttendanceController::class, 'update'])->name('admin . attendance.update');
 });

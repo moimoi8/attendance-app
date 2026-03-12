@@ -23,8 +23,8 @@
       @forelse($attendances as $attendance)
       <tr class="attendance-table__row">
         <td class="attendance-table__item">{{ $attendance->user->name }}</td>
-        <td class="attendance-table__item">{{ substr($attendance->clock_in, 0, 5) }}</td>
-        <td class="attendance-table__item">{{ substr($attendance->clock_out, 0, 5) }}</td>
+        <td class="attendance-table__item">{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}</td>
+        <td class="attendance-table__item">{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}</td>
         <td class="attendance-table__item">1：00</td>
         <td class="attendance-table__item">8：00</td>
         <td class="attendance-table__item">

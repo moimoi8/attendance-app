@@ -142,4 +142,23 @@ class AttendanceController extends Controller
     }
     return redirect()->back();
   }
+
+  public function show($id)
+  {
+    $attendance = Attendance::with(['rests'])->findOrFail($id);
+
+    return view('attendance.edit', compact('attendance'));
+  }
+
+  public function update(Request $request, $id)
+  {
+    $attendance = Attendance::findOrFail($id);
+
+    $attendance->update([
+      'clock_in' => $request->clock_in,
+      'clock_out' => $request->clock_out,
+      'description' => $request->description,
+    ]);
+    return redirect()->route('admin.attendance.detail', $id)->with('success', '勤怠を更新しました');
+  }
 }
