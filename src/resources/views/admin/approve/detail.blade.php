@@ -43,7 +43,7 @@
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">休憩</label>
           <div class="attendance-detail__content">
-            @php $rest1 = $attendance->rests->get(0); @endphp
+            @php $rest1 = $application->attendance->rests->get(0); @endphp
             <input type="text" name="rest1_start" class="attendance-detail__input attendance-detail__value" value="{{ $rest1 ? $rest1->start_time->format('H:i') : '' }}">
             <span class="attendance-detail__separator">～</span>
             <input type="text" name="rest1_end" class="attendance-detail__input attendance-detail__value" value="{{ $rest1 && $rest1->end_time ? $rest1->end_time->format('H:i') : '' }}">
@@ -53,7 +53,7 @@
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">休憩2</label>
           <div class="attendance-detail__content">
-            @php $rest2 = $attendance->attendance->rests->get(1); @endphp
+            @php $rest2 = $application->attendance->rests->get(1); @endphp
             <input type="text" name="rest2_start" class="attendance-detail__input attendance-detail__value" value="{{ $rest2 ? $rest2->start_time->format('H:i') : '' }}">
             <span class="attendance-detail__separator">～</span>
             <input type="text" name="rest2_end" class="attendance-detail__input attendance-detail__value" value="{{ $rest2 && $rest2->end_time ? $rest2->end_time->format('H:i') : '' }}">
