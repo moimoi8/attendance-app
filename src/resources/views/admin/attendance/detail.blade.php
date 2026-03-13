@@ -34,7 +34,7 @@
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">出勤・退勤</label>
           <div class="attendance-detail__content">
-            <input type="text" name="clock_in" class="attendance-detail__input attendance-detail__value" value="{{ $attendance->clock_in->format('H:i') }}">
+            <input type="text" name="clock_in" class="attendance-detail__input attendance-detail__value" value="{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}">
             <span class="attendance-detail__separator">～</span>
             <input type="text" name="clock_out" class="attendance-detail__input attendance-detail__value" value="{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}">
           </div>
@@ -63,7 +63,7 @@
         <div class="attendance-detail__row attendance-detail__row--note">
           <label class="attendance-detail__label">備考</label>
           <div class="attendance-detail__content">
-            <textarea name="description" class="attendance-detail__textarea">{{ $attendance->description }}</textarea>
+            <textarea class="attendance-detail__textarea" name="description">{{ $attendance->description }}</textarea>
           </div>
         </div>
       </div>

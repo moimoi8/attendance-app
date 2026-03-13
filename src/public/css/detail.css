@@ -101,3 +101,14 @@
   justify-content: flex-end;
   margin-top: 40px;
 }
+
+.attendance-detail__actions a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.c-button--approved {
+  background-color: #696969;
+  color: #ffffff;
+  cursor: not-allowed;
+}

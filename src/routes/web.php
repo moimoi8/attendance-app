@@ -55,20 +55,20 @@ Route::middleware(['auth'])->group(function () {
   Route::prefix('admin')->group(function () {
     Route::get('/attendance/list', [AdminController::class, 'index'])->name('admin.attendance.daily');
 
-    Route::get('/admin/attendance/{id}', [AdminController::class, 'show'])->name('admin.attendance.detail');
+    Route::get('/admin/attendance/staff/{id}', [AdminController::class, 'show'])->name('admin.attendance.detail');
 
-    Route::get('/staff/list', [AdminController::class, 'staffList'])->name('admin.staff.list');
+    Route::get('/admin/staff/list', [AdminController::class, 'staffList'])->name('admin.staff.list');
 
-    Route::get('/attendance/staff/{id}', function ($id) {
-      return view('admin.attendance.staff');
-    })->name('admin.attendance.staff_detail');
+    Route::get('/attendance/staff/{id}', [AdminController::class, 'userAttendance'])->name('admin.attendance.staff');
 
     Route::get('/stamp_correction_request/list', [AdminController::class, 'approveList'])->name('admin.approve.list');
 
-    Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', function ($id) {
-      return view('admin.approve.detail');
-    })->name('admin.approve.detail');
-  });
+    Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminController::class, 'approveShow'])->name('admin.approve.request_detail');
 
-  Route::patch('/admin/attendance/update/{id}', [AttendanceController::class, 'update'])->name('admin . attendance.update');
+    Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminController::class, 'approveUpdate'])->name('admin.approve.update');
+
+    Route::patch('/admin/attendance/update/{id}', [AttendanceController::class, 'update'])->name('admin.attendance.update');
+
+    Route::get('/staff/export/{id}', [AdminController::class, 'exportCsv'])->name('admin.staff.export');
+  });
 });

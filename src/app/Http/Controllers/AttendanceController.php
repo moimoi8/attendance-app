@@ -154,11 +154,30 @@ class AttendanceController extends Controller
   {
     $attendance = Attendance::findOrFail($id);
 
+    $formatTime = function ($time) {
+      if (!$time) return null;
+      $converted = mb_convert_kana($time, 'ka', 'UTF-8');
+      return str_replace(' ', '', $converted);
+    };
+
     $attendance->update([
-      'clock_in' => $request->clock_in,
-      'clock_out' => $request->clock_out,
+      'clock_in' => $formatTime($request->clock_in),
+      'clock_out' => $formatTime($request->clock_out),
       'description' => $request->description,
     ]);
+
+    foreach ([1, 2] as $index) {
+      $start = $formatTime($request->input("rest{$index}_start"));
+      $end = $formatTime($request->input("rest{$index}_end"));
+
+      if ($start && $end) {
+        $rest = $attendance->rests()->skip($index - 1)->first() ?: new Rest();
+        $rest->attendance_id = $attendance->id;
+        $rest->start_time = $start;
+        $rest->end_time = $end;
+        $rest->save();
+      }
+    }
     return redirect()->route('admin.attendance.detail', $id)->with('success', '勤怠を更新しました');
   }
 }

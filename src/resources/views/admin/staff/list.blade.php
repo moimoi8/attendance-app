@@ -19,7 +19,7 @@
         <td class="attendance-table__item">{{ $user->name }}</td>
         <td class="attendance-table__item">{{ $user->email }}</td>
         <td class="attendance-table__item">
-          <a href="#" class="attendance-table__link">詳細</a>
+          <a href="{{ route('admin.attendance.staff', ['id' => $user->id]) }}" class="attendance-table__link">詳細</a>
         </td>
       </tr>
       @endforeach

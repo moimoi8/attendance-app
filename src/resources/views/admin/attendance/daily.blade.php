@@ -25,8 +25,8 @@
         <td class="attendance-table__item">{{ $attendance->user->name }}</td>
         <td class="attendance-table__item">{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}</td>
         <td class="attendance-table__item">{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}</td>
-        <td class="attendance-table__item">1：00</td>
-        <td class="attendance-table__item">8：00</td>
+        <td class="attendance-table__item">{{ $attendance->total_rest_time }}</td>
+        <td class="attendance-table__item">{{ $attendance->total_work_time }}</td>
         <td class="attendance-table__item">
           <a href="{{ route('admin.attendance.detail', ['id' => $attendance->id]) }}" class="attendance-table__link">詳細</a>
         </td>
