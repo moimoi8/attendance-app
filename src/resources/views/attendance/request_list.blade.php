@@ -15,10 +15,10 @@
     <div class="attendance-tabs">
       <ul class="attendance-tabs__list">
         <li class="attendance-tabs__item">
-          <a href="#" class="attendance-tabs__link is-active">承認待ち</a>
+          <a href="{{ route('attendance.request_list', ['tab' => 'pending']) }}" class="attendance-tabs__link {{ request('tab') != 'approved' ? 'is-active' : '' }}">承認待ち</a>
         </li>
         <li class="attendance-tabs__item">
-          <a href="#" class="attendance-tabs__link">承認済み</a>
+          <a href="{{ route('attendance.request_list', ['tab' => 'approved']) }}" class="attendance-tabs__link {{ request('tab') == 'approved' ? 'is-active' : '' }}">承認済み</a>
         </li>
       </ul>
     </div>
@@ -35,13 +35,13 @@
 
       @foreach($applications as $application)
       <tr class="attendance-table__row">
-        <td class="attendance-table__item">承認待ち</td>
-        <td class="attendance-table__item">西 怜奈</td>
-        <td class="attendance-table__item">2023/06/01</td>
-        <td class="attendance-table__item">遅延のため</td>
-        <td class="attendance-table__item">2023/06/02</td>
+        <td class="attendance-table__item">{{ $application->status == 1 ? '承認待ち' : '承認済み' }}</td>
+        <td class="attendance-table__item">{{ $application->user->name }}</td>
+        <td class="attendance-table__item">{{ $application->attendance->date->format('Y/m/d') }}</td>
+        <td class="attendance-table__item">{{ $application->reason }}</td>
+        <td class="attendance-table__item">{{ $application->created_at->format('Y-m-d') }}</td>
         <td class="attendance-table__item">
-          <a href="#" class="attendance-table__link">詳細</a>
+          <a href="{{ route('attendance.edit', ['id' => $application->attendance_id]) }}" class="attendance-table__link">詳細</a>
         </td>
       </tr>
       @endforeach

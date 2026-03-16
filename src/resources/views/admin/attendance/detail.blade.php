@@ -19,15 +19,19 @@
       <div class="attendance-detail__table">
         <div class="attendance-detail__row attendance-detail__row--name">
           <label class="attendance-detail__label">名前</label>
-          <div class="attendance-detail__content">{{ $attendance->user->name }}</div>
+          <div class="attendance-detail__content">
+            <span class="attendance-detail__value attendance-detail__user-name">
+              {{ $attendance->user->name }}</span>
+          </div>
         </div>
 
-        <div class="attendance-detail__row attendance-detail__row--label">
+        <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">日付</label>
           <div class="attendance-detail__content">
-            <span class="attendance-detail__value">{{ $attendance->date->format('Y年') }}</span>
+            <span class="attendance-detail__value attendance-detail__year">{{ $attendance->date->format('Y年') }}</span>
             <span class="attendance-detail__separator"></span>
-            <span class="attendance-detail__value">{{ $attendance->date->format('n月j日') }}</span>
+            <span class="attendance-detail__value attendance-detail__date">
+              {{ $attendance->date->format('n月j日') }}</span>
           </div>
         </div>
 
@@ -60,7 +64,7 @@
           </div>
         </div>
 
-        <div class="attendance-detail__row attendance-detail__row--note">
+        <div class="attendance-detail__row attendance-detail__row--description">
           <label class="attendance-detail__label">備考</label>
           <div class="attendance-detail__content">
             <textarea class="attendance-detail__textarea" name="description">{{ $attendance->description }}</textarea>

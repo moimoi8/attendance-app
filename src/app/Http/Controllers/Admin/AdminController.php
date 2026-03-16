@@ -118,4 +118,24 @@ class AdminController extends Controller
 
     return view('admin.approve.detail', compact('application'));
   }
+
+  public function approveUpdate(Request $request, $attendance_correct_request_id)
+  {
+    $application = AttendanceCorrectRequest::findOrFail($attendance_correct_request_id);
+
+    $attendance = $application->attendance;
+
+    $attendance->update([
+      'clock_in' => $application->requested_clock_in,
+      'clock_out' => $application->requested_clock_out,
+    ]);
+
+    $application->update([
+      'status' => 2
+    ]);
+
+    return redirect()
+      ->route('admin.approve.request_detail', ['attendance_correct_request_id' => $application->id])
+      ->with('message', '承認しました');
+  }
 }

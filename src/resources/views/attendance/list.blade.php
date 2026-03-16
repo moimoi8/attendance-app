@@ -1,4 +1,4 @@
-@extends('layout.app')
+@extends('layouts.app')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
@@ -9,7 +9,7 @@
   <div class="l-content-inner">
     @include('components.page-header', [
     'title' => '勤怠一覧',
-    'showDateNav' => true
+    'showDateNav' => true,
     'date' => $date
     ])
 
@@ -25,13 +25,13 @@
 
       @foreach($attendances as $attendance)
       <tr class="attendance-table__row">
-        <td class="attendance-table__item">山田 太郎</td>
-        <td class="attendance-table__item">09：00</td>
-        <td class="attendance-table__item">18：00</td>
-        <td class="attendance-table__item">1：00</td>
-        <td class="attendance-table__item">8：00</td>
+        <td class="attendance-table__item">{{ $attendance->user->name }}</td>
+        <td class="attendance-table__item">{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}</td>
+        <td class="attendance-table__item">{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}</td>
+        <td class="attendance-table__item">{{ $attendance->total_rest_time }}</td>
+        <td class="attendance-table__item">{{ $attendance->total_work_time }}</td>
         <td class="attendance-table__item">
-          <a href="#" class="attendance-table__link">詳細</a>
+          <a href="{{ route('attendance.edit', ['id' => $attendance->id]) }}" class="attendance-table__link">詳細</a>
         </td>
       </tr>
       @endforeach

@@ -28,7 +28,7 @@
         <td class="attendance-table__item">{{ $attendance->date->format('m/d') }}({{ $attendance->date->isoFormat('ddd') }})</td>
 
         @if($attendance->clock_in)
-        <td class="attendance-table__item">{{ $attendance->clock_in->format('H:i') }}</td>
+        <td class="attendance-table__item">{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}</td>
         <td class="attendance-table__item">{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}</td>
         <td class="attendance-table__item">{{ $attendance->total_rest_time }}</td>
         <td class="attendance-table__item">{{ $attendance->total_work_time }}</td>

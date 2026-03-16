@@ -39,15 +39,11 @@ Route::middleware(['auth'])->group(function () {
 
   Route::post('/rest/end', [AttendanceController::class, 'restEnd'])->name('rest.end');
 
-  Route::get('/attendance/list', function () {
-    return view('attendance.list');
-  })->name('attendance.list');
+  Route::get('/attendance/list', [AttendanceController::class, 'attendanceList'])->name('attendance.list');
 
-  Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])->name('attendance.detail');
+  Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])->name('attendance.edit');
 
-  Route::get('/stamp_correction_request/list', function () {
-    return view('attendance.request_list');
-  })->name('request.list');
+  Route::get('/stamp_correction_request/list', [AttendanceController::class, 'requestList'])->name('attendance.request_list');
 
   Route::patch('/attendance/update/{id}', [AttendanceController::class, 'update'])->name('attendance.update');
 
@@ -65,7 +61,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminController::class, 'approveShow'])->name('admin.approve.request_detail');
 
-    Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminController::class, 'approveUpdate'])->name('admin.approve.update');
+    Route::patch('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminController::class, 'approveUpdate'])->name('admin.approve.update');
 
     Route::patch('/admin/attendance/update/{id}', [AttendanceController::class, 'update'])->name('admin.attendance.update');
 

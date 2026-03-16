@@ -4,7 +4,7 @@
   min-height: 555px;
   width: 100%;
   max-width: 900px;
-  margin: 20px auto 50px;
+  margin: 20px auto 20px;
   border: 2px solid #e1e1e1e1;
   background-color: #ffffff;
   border-radius: 10px;
@@ -19,7 +19,7 @@
   letter-spacing: 0.15em;
 }
 
-.attendance-detail__row--note {
+.attendance-detail__row--description {
   height: 106px;
   border-bottom: none;
 }
@@ -40,6 +40,7 @@
   display: flex;
   align-items: center;
   gap: 70px;
+  margin-left: 50px;
 }
 
 .attendance-detail__text {
@@ -52,6 +53,8 @@
   font-weight: bold;
   width: 80px;
   text-align: left;
+  padding-left: 10px;
+  white-space: nowrap;
 }
 
 .attendance-detail__separator {
@@ -64,7 +67,7 @@
 }
 
 .attendance-detail__text {
-  margin: 0;
+  margin-left: 10px;
   font-weight: bold;
 }
 
@@ -99,7 +102,7 @@
 .attendance-detail__actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 40px;
+  margin: 30px 0 0;
 }
 
 .attendance-detail__actions a {
@@ -111,4 +114,29 @@
   background-color: #696969;
   color: #ffffff;
   cursor: not-allowed;
+  margin-top: 30px;
 }
+
+.attendance-detail__error-message {
+  color: #ff0000;
+  opacity: 0.5;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  margin-top: 0;
+}
+
+.attendance-detail__user-name {
+  width: auto;
+  white-space: nowrap;
+  padding-left: 10px;
+}
+
+.attendance-detail__year {
+  padding-left: 10px;
+}
+
+.attendance-detail__date {
+  padding-left: 10px;
+}
+

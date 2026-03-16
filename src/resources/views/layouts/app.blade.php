@@ -53,7 +53,7 @@
             <a href="{{ route('attendance.list') }}" class="header__nav-link">勤怠一覧</a>
           </li>
           <li class="header__nav-item">
-            <a href="{{ route('request.list') }}" class="header__nav-link">申請</a>
+            <a href="{{ route('attendance.request_list') }}" class="header__nav-link">申請</a>
           </li>
           @endif
           @endif

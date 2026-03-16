@@ -67,4 +67,9 @@ class Attendance extends Model
     $minutes = $workMinutes % 60;
     return sprintf('%02d:%02d', $hours, $minutes);
   }
+
+  public function correctRequest()
+  {
+    return $this->hasOne(AttendanceCorrectRequest::class);
+  }
 }
