@@ -20,6 +20,8 @@ class AttendanceController extends Controller
       ->where('date', $today)
       ->first();
 
+    $is_clocked_out = $attendance && $attendance->clock_out ? true : false;
+
     $is_resting = false;
     if ($attendance) {
       $is_resting = Rest::where('attendance_id', $attendance->id)
@@ -47,6 +49,7 @@ class AttendanceController extends Controller
     $status_label = $workStatus->name;
 
     return view('attendance.punch', [
+      'is_clocked_out' => $is_clocked_out,
       'status' => $status,
       'status_key' => $status_key,
       'status_label' => $status_label,
@@ -181,14 +184,30 @@ class AttendanceController extends Controller
   {
     $user = Auth::user();
     $dateStr = $request->query('date', Carbon::now()->format('Y-m-d'));
-    $date = Carbon::parse($dateStr);
-    $attendances = Attendance::where('user_id', $user->id)
-      ->orderBy('date', 'desc')
-      ->get();
+    $currentDate = Carbon::parse($dateStr);
+
+    $startDate = $currentDate->copy()->startOfMonth()->format('Y-m-d');
+    $endDate = $currentDate->copy()->endOfMonth()->format('Y-m-d');
+
+    if ($user->role === 'admin') {
+      $attendances = Attendance::where('date', $currentDate->format('Y-m-d'))
+        ->with('user')
+        ->get();
+
+      return view('admin.attendance.list', [
+        'attendances' => $attendances,
+        'date' => $currentDate->format('Y-m-d'),
+      ]);
+    } else {
+      $attendances = Attendance::where('user_id', $user->id)
+        ->whereBetween('date', [$startDate, $endDate])
+        ->orderBy('date', 'asc')
+        ->get();
+    }
 
     return view('attendance.list', [
       'attendances' => $attendances,
-      'date' => $date,
+      'date' => $currentDate->format('Y-m-d'),
     ]);
   }
 

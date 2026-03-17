@@ -40,7 +40,7 @@
         @endif
 
         <td class="attendance-table__item">
-          <a href="{{ route('admin.attendance.staff', ['id' => $user->id]) }}" class="attendance-table__link">詳細</a>
+          <a href="{{ route('admin.attendance.detail', ['id' => $attendance->id]) }}" class="attendance-table__link">詳細</a>
         </td>
       </tr>
       @endforeach

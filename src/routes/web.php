@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\RegisterController;
 use App\Models\Attendance;
 
 /*
@@ -26,6 +27,9 @@ Route::post('/login', [LoginController::class, 'store']);
 
 Route::get('/admin/login', [LoginController::class, 'showAdminLoginForm'])->name('admin.login');
 Route::post('/admin/login', [LoginController::class, 'store']);
+
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'store']);
 
 Route::middleware(['auth'])->group(function () {
 
@@ -51,9 +55,9 @@ Route::middleware(['auth'])->group(function () {
   Route::prefix('admin')->group(function () {
     Route::get('/attendance/list', [AdminController::class, 'index'])->name('admin.attendance.daily');
 
-    Route::get('/admin/attendance/staff/{id}', [AdminController::class, 'show'])->name('admin.attendance.detail');
+    Route::get('/attendance/{id}', [AdminController::class, 'show'])->name('admin.attendance.detail');
 
-    Route::get('/admin/staff/list', [AdminController::class, 'staffList'])->name('admin.staff.list');
+    Route::get('/staff/list', [AdminController::class, 'staffList'])->name('admin.staff.list');
 
     Route::get('/attendance/staff/{id}', [AdminController::class, 'userAttendance'])->name('admin.attendance.staff');
 
@@ -63,7 +67,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::patch('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminController::class, 'approveUpdate'])->name('admin.approve.update');
 
-    Route::patch('/admin/attendance/update/{id}', [AttendanceController::class, 'update'])->name('admin.attendance.update');
+    Route::patch('/attendance/update/{id}', [AttendanceController::class, 'update'])->name('admin.attendance.update');
 
     Route::get('/staff/export/{id}', [AdminController::class, 'exportCsv'])->name('admin.staff.export');
   });

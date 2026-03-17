@@ -38,12 +38,12 @@
             <a href="{{ route('admin.approve.list') }}" class="header__nav-link">申請一覧</a>
           </li>
           @else
-          @if(Route::currentRouteName() == 'attendance.clockout')
+          @if(isset($is_clocked_out) && $is_clocked_out)
           <li class="header__nav-item">
             <a href="{{ route('attendance.list') }}" class="header__nav-link">今月の出勤一覧</a>
           </li>
           <li class="header__nav-item">
-            <a href="{{ route('request.list') }}" class="header__nav-link">申請一覧</a>
+            <a href="{{ route('attendance.request_list') }}" class="header__nav-link">申請一覧</a>
           </li>
           @else
           <li class="header__nav-item">

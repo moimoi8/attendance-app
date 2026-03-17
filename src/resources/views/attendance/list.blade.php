@@ -15,7 +15,7 @@
 
     <x-attendance-table>
       <x-slot name="thead">
-        <th class="attendance-table__header">名前</th>
+        <th class="attendance-table__header">日付</th>
         <th class="attendance-table__header">出勤</th>
         <th class="attendance-table__header">退勤</th>
         <th class="attendance-table__header">休憩</th>
@@ -25,7 +25,7 @@
 
       @foreach($attendances as $attendance)
       <tr class="attendance-table__row">
-        <td class="attendance-table__item">{{ $attendance->user->name }}</td>
+        <td class="attendance-table__item">{{ $attendance->date->isoFormat('MM/DD(ddd)') }}</td>
         <td class="attendance-table__item">{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : '' }}</td>
         <td class="attendance-table__item">{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : '' }}</td>
         <td class="attendance-table__item">{{ $attendance->total_rest_time }}</td>

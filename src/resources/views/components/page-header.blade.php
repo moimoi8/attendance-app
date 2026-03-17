@@ -6,7 +6,22 @@
 
 @if($showDateNav ?? false)
 <div class="date-nav">
-  <a href="{{ route('admin.attendance.daily', ['date' => \Carbon\Carbon::parse($date)->subDay()->format('Y-m-d')]) }}" class="date-nav__btn date-nav__btn--prev">
+  @php
+  $carbonDate = \Carbon\Carbon::parse($date);
+  $routeName = (Auth::user()->role === 'admin') ? 'admin.attendance.daily' : 'attendance.list';
+
+  if (Auth::user()->role === 'admin') {
+  $prev = $carbonDate->copy()->subDay()->format('Y-m-d');
+  $next = $carbonDate->copy()->addDay()->format('Y-m-d');
+  $displayDate = $carbonDate->format('Y-m-d');
+  } else {
+  $prev = $carbonDate->copy()->subMonth()->format('Y-m-d');
+  $next = $carbonDate->copy()->addMonth()->format('Y-m-d');
+  $displayDate = $carbonDate->format('Y/m');
+  }
+  @endphp
+
+  <a href="{{ route($routeName, ['date' => $prev]) }}" class="date-nav__btn date-nav__btn--prev">
     <img src="{{ asset('images/arrow.png') }}" alt="" class="date-nav__arrow">
     <span class="date-nav__btn-text">前日</span>
   </a>
@@ -14,10 +29,10 @@
     <label class="date-nav__label">
       <img src="{{ asset('images/calendar-icon.png') }}" alt="" class="date-nav__icon">
       <span class="date-nav__date-text">{{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}</span>
-      <input type="date" class="date-nav__input" value="{{ $date }}" style="display: none;">
+      <input type="date" class="date-nav__input" value="{{ $date }}" data-is-admin="{{ Auth::user()->role === 'admin' ? 'true' : 'false' }}" style="display: none;">
     </label>
   </div>
-  <a href="{{ route('admin.attendance.daily', ['date' => \Carbon\Carbon::parse($date)->addDay()->format('Y-m-d')]) }}" class="date-nav__btn date-nav__btn--next">
+  <a href="{{ route($routeName, ['date' => $next]) }}" class="date-nav__btn date-nav__btn--next">
     <span class="date-nav__btn-text">翌日</span>
     <img src="{{ asset('images/arrow.png') }}" alt="" class="date-nav__arrow">
   </a>
@@ -37,7 +52,9 @@
     dateInput.addEventListener('change', (e) => {
       const selectedDate = e.target.value;
       if (selectedDate) {
-        window.location.href = `/admin/attendance/list?date=${selectedDate}`;
+        const isAdmin = dateInput.dataset.isAdmin === 'true';
+        const baseUrl = isAdmin ? '/admin/attendance/list' : '/attendance/list';
+        window.location.href = `${baseUrl}?date=${selectedDate}`;
       }
     });
   });

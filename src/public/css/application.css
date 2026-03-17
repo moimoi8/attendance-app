@@ -24,6 +24,10 @@
   text-decoration: none;
   color: #000000;
   font-size: 16px;
+  font-weight: 400;
+}
+
+.attendance-tabs__link.is-active {
   font-weight: bold;
 }
 
