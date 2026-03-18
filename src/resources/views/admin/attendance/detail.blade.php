@@ -44,25 +44,38 @@
           </div>
         </div>
 
+        @foreach($attendance->rests as $index => $rest)
         <div class="attendance-detail__row attendance-detail__row--auto">
-          <label class="attendance-detail__label">休憩</label>
+          <label class="attendance-detail__label">休憩{{ $index > 0 ? $index + 1 : '' }}</label>
           <div class="attendance-detail__content">
-            @php $rest1 = $attendance->rests->get(0); @endphp
-            <input type="text" name="rest1_start" class="attendance-detail__input attendance-detail__value" value="{{ $rest1 ? $rest1->start_time->format('H:i') : '' }}">
+            @if($attendance->correctRequest?->status == 1)
+            <span class="attendance-detail__value">
+              {{ $rest->start_time?->format('H:i') }}
+            </span>
             <span class="attendance-detail__separator">～</span>
-            <input type="text" name="rest1_end" class="attendance-detail__input attendance-detail__value" value="{{ $rest1 && $rest1->end_time ? $rest1->end_time->format('H:i') : '' }}">
+            <span class="attendance-detail__value">
+              {{ $rest->end_time?->format('H:i') ?? '' }}
+            </span>
+            @else
+            <input type="text" name="rests[{{ $rest->id }}][start]" class="attendance-detail__input attendance-detail__value" value="{{ $rest->start_time->format('H:i') }}">
+            <span class="attendance-detail__separator">～</span>
+            <input type="text" name="rests[{{ $rest->id }}][end]" class="attendance-detail__input attendance-detail__value" value="{{ $rest->end_time ? $rest->end_time->format('H:i') : '' }}">
+            @endif
           </div>
         </div>
+        @endforeach
 
+        @if(!($attendance->correctRequest?->status == 1))
         <div class="attendance-detail__row attendance-detail__row--auto">
-          <label class="attendance-detail__label">休憩2</label>
+          @php $nextIndex = $attendance->rests->count() + 1; @endphp
+          <label class="attendance-detail__label">休憩{{ $nextIndex > 1 ? $nextIndex : '' }}</label>
           <div class="attendance-detail__content">
-            @php $rest2 = $attendance->rests->get(1); @endphp
-            <input type="text" name="rest2_start" class="attendance-detail__input attendance-detail__value" value="{{ $rest2 ? $rest2->start_time->format('H:i') : '' }}">
+            <input type="text" name="new_rests[0][start]" class="attendance-detail__input attendance-detail__value" value="">
             <span class="attendance-detail__separator">～</span>
-            <input type="text" name="rest2_end" class="attendance-detail__input attendance-detail__value" value="{{ $rest2 && $rest2->end_time ? $rest2->end_time->format('H:i') : '' }}">
+            <input type="text" name="new_rests[0][end]" class="attendance-detail__input attendance-detail__value" value="">
           </div>
         </div>
+        @endif
 
         <div class="attendance-detail__row attendance-detail__row--description">
           <label class="attendance-detail__label">備考</label>

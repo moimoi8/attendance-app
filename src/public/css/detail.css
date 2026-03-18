@@ -14,14 +14,18 @@
   display: flex;
   align-items: center;
   min-height: 80px;
+  height: auto;
+  padding: 10px 0;
   border-bottom: 2px solid #e1e1e1;
   box-sizing: border-box;
   letter-spacing: 0.15em;
 }
 
 .attendance-detail__row--description {
-  height: 106px;
+  min-height: 106px;
+  height: auto;
   border-bottom: none;
+  padding-bottom: 20px;
 }
 
 .attendance-detail__label {
@@ -38,9 +42,24 @@
   font-weight: bold;
   color: #000000;
   display: flex;
-  align-items: center;
-  gap: 70px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
   margin-left: 50px;
+  flex: 1;
+}
+
+.attendance-detail__group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.attendance-detail__inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .attendance-detail__text {

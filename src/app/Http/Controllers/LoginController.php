@@ -33,7 +33,7 @@ class LoginController extends Controller
       return redirect()->intended('/attendance');
     }
     return back()->withErrors([
-      'email' => 'ログインIDまたはパスワードが正しくありません',
+      'email' => 'ログイン情報が登録されていません',
     ])->onlyInput('email');
   }
 }

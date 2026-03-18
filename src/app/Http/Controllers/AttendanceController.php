@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\WorkStatus;
 use App\Models\Rest;
+use App\Http\Requests\ExemptRequest;
 
 class AttendanceController extends Controller
 {
@@ -147,7 +148,7 @@ class AttendanceController extends Controller
     return view('attendance.edit', compact('attendance'));
   }
 
-  public function update(Request $request, $id)
+  public function update(ExemptRequest $request, $id)
   {
     $user = Auth::user();
     $attendance = Attendance::findOrFail($id);
@@ -186,8 +187,13 @@ class AttendanceController extends Controller
     $dateStr = $request->query('date', Carbon::now()->format('Y-m-d'));
     $currentDate = Carbon::parse($dateStr);
 
-    $startDate = $currentDate->copy()->startOfMonth()->format('Y-m-d');
-    $endDate = $currentDate->copy()->endOfMonth()->format('Y-m-d');
+    $startOfMonth = $currentDate->copy()->startOfMonth();
+    $endOfMonth = $currentDate->copy()->endOfMonth();
+
+    $calendarDays = [];
+    for ($day = $startOfMonth->copy(); $day->lte($endOfMonth); $day->addDay()) {
+      $calendarDays[] = $day->copy();
+    }
 
     if ($user->role === 'admin') {
       $attendances = Attendance::where('date', $currentDate->format('Y-m-d'))
@@ -196,18 +202,23 @@ class AttendanceController extends Controller
 
       return view('admin.attendance.list', [
         'attendances' => $attendances,
-        'date' => $currentDate->format('Y-m-d'),
+        'date' => $currentDate,
+        'calendarDays' => $calendarDays,
       ]);
     } else {
       $attendances = Attendance::where('user_id', $user->id)
-        ->whereBetween('date', [$startDate, $endDate])
-        ->orderBy('date', 'asc')
-        ->get();
+        ->whereBetween('date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])
+        ->get()
+        ->keyBy(function ($item) {
+          return Carbon::parse($item->date)->format('Y-m-d');
+        });
     }
 
     return view('attendance.list', [
+      'calendarDays' => $calendarDays,
       'attendances' => $attendances,
-      'date' => $currentDate->format('Y-m-d'),
+      'date' => $currentDate,
+      'currentDate' => $currentDate,
     ]);
   }
 
@@ -222,5 +233,20 @@ class AttendanceController extends Controller
       ->get();
 
     return view('attendance.request_list', compact('applications'));
+  }
+
+  public function edit(Request $request, $id = null)
+  {
+    $date = $request->query('date');
+    $user = Auth::user();
+    $attendance = Attendance::where('user_id', $user->id)
+      ->where('date', $date)
+      ->first();
+
+    if (!$attendance) {
+      $attendance = new Attendance(['date' => Carbon::parse($date)]);
+    }
+
+    return view('attendance.detail', compact('attendance'));
   }
 }
