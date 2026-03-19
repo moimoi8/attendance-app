@@ -127,11 +127,46 @@ class AdminController extends Controller
     return $response;
   }
 
+  public function update(Request $request, $id)
+  {
+    $attendance = Attendance::findOrFail($id);
+
+    $attendance->update([
+      'clock_in' => $request->clock_in,
+      'clock_out' => $request->clock_out,
+      'description' => $request->description,
+    ]);
+
+    if ($request->has('rests')) {
+      foreach ($request->rests as $restId => $restData) {
+        $rest = $attendance->rests()->find($restId);
+        if ($rest) {
+          $rest->update([
+            'start_time' => $restData['start'],
+            'end_time' => $restData['end'],
+          ]);
+        }
+      }
+    }
+
+    if ($request->filled('new_rests.0.start')) {
+      $attendance->rests()->create([
+        'start_time' => $request->new_rests[0]['start'],
+        'end_time' => $request->new_rests[0]['end'],
+      ]);
+    }
+
+    return redirect()
+      ->route('admin.attendance.show', ['id' => $attendance->id])
+      ->with('message', '勤怠情報を修正しました');
+  }
+
   public function approveShow($attendance_correct_request_id)
   {
     $application = AttendanceCorrectRequest::with(['user', 'attendance.rests'])->findOrFail($attendance_correct_request_id);
+    $attendance = $application->attendance;
 
-    return view('admin.approve.detail', compact('application'));
+    return view('admin.approve.detail', compact('application', 'attendance'));
   }
 
   public function approveUpdate(Request $request, $attendance_correct_request_id)

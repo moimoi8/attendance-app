@@ -40,7 +40,7 @@
 
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">出勤・退勤</label>
-          <div class="attendance-detail__content {{ $attendance->correctRequest?->status == 1 ? 'attendance-detail__content--read-only' : '' }}">
+          <div class="attendance-detail__content attendance-detail__content--view">
             @if($attendance->correctRequest?->status == 1)
             <span class="attendance-detail__value">
               {{ $attendance->correctRequest->requested_clock_in->format('H:i') }}
@@ -69,7 +69,7 @@
         @foreach($attendance->rests as $index => $rest)
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">休憩{{ $index + 1 }}</label>
-          <div class="attendance-detail__content {{ $attendance->correctRequest?->status == 1 ? 'attendance-detail__content--read-only' : '' }}">
+          <div class="attendance-detail__content attendance-detail__content--view">
             @if($attendance->correctRequest?->status == 1)
             <span class="attendance-detail__value">
               {{ $rest->start_time?->format('H:i') }}
@@ -81,9 +81,9 @@
             @else
             <div class="attendance-detail__input-group">
               <div class="attendance-detail__inputs">
-                <input type="text" name="rest{{ $index + 1 }}_start" class="attendance-detail__input attendance-detail__value" value="{{ old('rest'.($index+1).'_start', $rest->start_time?->format('H:i') ?? '') }}">
+                <input type="text" name="rests[{{ $rest->id }}][start]" class="attendance-detail__input attendance-detail__value" value="{{ old('rest'.($index+1).'_start', $rest->start_time?->format('H:i') ?? '') }}">
                 <span class="attendance-detail__separator">～</span>
-                <input type="text" name="rest{{ $index + 1 }}_end" class="attendance-detail__input attendance-detail__value" value="{{ old('rest'.($index+1).'_end', $rest->end_time?->format('H:i') ?? '') }}">
+                <input type="text" name="rests[{{ $rest->id }}][end]" class="attendance-detail__input attendance-detail__value" value="{{ old('rest'.($index+1).'_end', $rest->end_time?->format('H:i') ?? '') }}">
               </div>
               @error('rest'.($index+1).'_start')
               <p class="attendance-detail__error-message">
@@ -99,8 +99,8 @@
         @if(!($attendance->correctRequest?->status == 1))
         <div class="attendance-detail__row attendance-detail__row--auto">
           @php $nextIndex = $attendance->rests->count() + 1; @endphp
-          <label class="attendance-detail__label">休憩{{ $nextIndex > 1 ? $nextIndex : '' }}</label>
-          <div class="attendance-detail__content">
+          <label class="attendance-detail__label">休憩{{ $nextIndex }}</label>
+          <div class="attendance-detail__content attendance-detail__content--view">
             <div class="attendance-detail__group">
               <input type="text" name="new_rests[0][start]" class="attendance-detail__input attendance-detail__value" value="{{ old('new_rests.0.start') }}">
               <span class="attendance-detail__separator">～</span>

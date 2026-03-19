@@ -36,7 +36,7 @@
 
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">出勤・退勤</label>
-          <div class="attendance-detail__content">
+          <div class="attendance-detail__content attendance-detail__content--view">
             <span class="attendance-detail__value">
               {{ optional($application->requested_clock_in)->format('H:i') }}
             </span>
@@ -47,33 +47,20 @@
           </div>
         </div>
 
+        @foreach($attendance->rests as $index => $rest)
         <div class="attendance-detail__row attendance-detail__row--auto">
-          <label class="attendance-detail__label">休憩</label>
-          <div class="attendance-detail__content">
-            @php $rest1 = $application->attendance->rests->get(0); @endphp
+          <label class="attendance-detail__label">休憩{{ $index + 1 }}</label>
+          <div class="attendance-detail__content attendance-detail__content--view">
             <span class="attendance-detail__value">
-              {{ $rest1 ? $rest1->start_time->format('H:i') : '' }}
+              {{ $rest->start_time?->format('H:i') }}
             </span>
             <span class="attendance-detail__separator">～</span>
             <span class="attendance-detail__value">
-              {{ $rest1 && $rest1->end_time ? $rest1->end_time->format('H:i') : '' }}
+              {{ $rest->end_time?->format('H:i') }}
             </span>
           </div>
         </div>
-
-        <div class="attendance-detail__row attendance-detail__row--auto">
-          <label class="attendance-detail__label">休憩2</label>
-          <div class="attendance-detail__content">
-            @php $rest2 = $application->attendance->rests->get(1); @endphp
-            <span class="attendance-detail__value">
-              {{ $rest2 ? $rest2->start_time->format('H:i') : '' }}
-            </span>
-            <span class="attendance-detail__separator">～</span>
-            <span class="attendance-detail__value">
-              {{ $rest2 && $rest2->end_time ? $rest2->end_time->format('H:i') : '' }}
-            </span>
-          </div>
-        </div>
+        @endforeach
 
         <div class="attendance-detail__row attendance-detail__row--description">
           <label class="attendance-detail__label">備考</label>
