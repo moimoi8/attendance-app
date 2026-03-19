@@ -166,15 +166,33 @@ class AttendanceController extends Controller
         'status' => 1,
       ]
     );
-    foreach ([1, 2] as $index) {
-      $start = $formatTime($request->input("rest{$index}_start"));
-      $end = $formatTime($request->input("rest{$index}_end"));
-      if ($start && $end) {
-        $rest = $attendance->rests()->skip($index - 1)->first() ?: new Rest();
-        $rest->attendance_id = $attendance->id;
-        $rest->start_time = $start;
-        $rest->end_time = $end;
-        $rest->save();
+    foreach ($request->all() as $key => $value) {
+      if (preg_match('/^rest(\d+)_start$/', $key, $matches)) {
+        $index = $matches[1];
+        $start = $formatTime($value);
+        $end = $formatTime($request->input("rest{$index}_end"));
+
+        if ($start && $end) {
+          $rest = $attendance->rests()->skip($index - 1)->first() ?: new Rest();
+          $rest->attendance_id = $attendance->id;
+          $rest->start_time = $start;
+          $rest->end_time = $end;
+          $rest->save();
+        }
+      }
+    }
+    if ($request->has('new_rests')) {
+      foreach ($request->new_rests as $newRest) {
+        $start = $formatTime($newRest['start']);
+        $end = $formatTime($newRest['end']);
+
+        if ($start && $end) {
+          $rest = new Rest();
+          $rest->attendance_id = $attendance->id;
+          $rest->start_time = $start;
+          $rest->end_time = $end;
+          $rest->save();
+        }
       }
     }
 

@@ -40,7 +40,7 @@
 
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">出勤・退勤</label>
-          <div class="attendance-detail__content">
+          <div class="attendance-detail__content {{ $attendance->correctRequest?->status == 1 ? 'attendance-detail__content--read-only' : '' }}">
             @if($attendance->correctRequest?->status == 1)
             <span class="attendance-detail__value">
               {{ $attendance->correctRequest->requested_clock_in->format('H:i') }}
@@ -62,19 +62,14 @@
               {{ $message }}
             </p>
             @enderror
-            @error('clock_out')
-            <p class="attendance-detail__error-message">
-              {{ $message }}
-            </p>
-            @enderror
+            @endif
           </div>
-          @endif
         </div>
 
         @foreach($attendance->rests as $index => $rest)
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">休憩{{ $index + 1 }}</label>
-          <div class="attendance-detail__content">
+          <div class="attendance-detail__content {{ $attendance->correctRequest?->status == 1 ? 'attendance-detail__content--read-only' : '' }}">
             @if($attendance->correctRequest?->status == 1)
             <span class="attendance-detail__value">
               {{ $rest->start_time?->format('H:i') }}
@@ -95,11 +90,6 @@
                 {{ $message }}
               </p>
               @enderror
-              @error('rest'.($index+1).'_end')
-              <p class="attendance-detail__error-message">
-                {{ $message }}
-              </p>
-              @enderror
             </div>
             @endif
           </div>
@@ -112,10 +102,15 @@
           <label class="attendance-detail__label">休憩{{ $nextIndex > 1 ? $nextIndex : '' }}</label>
           <div class="attendance-detail__content">
             <div class="attendance-detail__group">
-              <input type="text" name="new_rests[0][start]" class="attendance-detail__input attendance-detail__value" value="">
+              <input type="text" name="new_rests[0][start]" class="attendance-detail__input attendance-detail__value" value="{{ old('new_rests.0.start') }}">
               <span class="attendance-detail__separator">～</span>
-              <input type="text" name="new_rests[0][end]" class="attendance-detail__input attendance-detail__value" value="">
+              <input type="text" name="new_rests[0][end]" class="attendance-detail__input attendance-detail__value" value="{{ old('new_rests.0.end') }}">
             </div>
+            @error('new_rests.0.start')
+            <p class="attendance-detail__error-message">
+              {{ $message }}
+            </p>
+            @enderror
           </div>
         </div>
         @endif

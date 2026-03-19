@@ -10,7 +10,9 @@
     @include('components.page-header', [
     'title' => '勤怠一覧',
     'showDateNav' => true,
-    'date' => $date
+    'navType' => 'month',
+    'date' => $date,
+    'routeName' => 'attendance.list'
     ])
 
     <x-attendance-table>

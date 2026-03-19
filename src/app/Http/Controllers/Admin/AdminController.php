@@ -30,25 +30,28 @@ class AdminController extends Controller
   public function userAttendance(Request $request, $id)
   {
     $user = User::findOrFail($id);
-    $month = $request->query('month', now()->format('Y-m'));
-    $date = Carbon::parse($month . '-01');
+    $dateParam = $request->query('date', now()->format('Y-m-d'));
+    $date = Carbon::parse($dateParam)->startOfMonth();
 
-    $prevMonth = $date->copy()->subMonth()->format('Y-m');
-    $nextMonth = $date->copy()->addMonth()->format('Y-m');
+    $calendarDays = [];
+    $daysInMonth = $date->daysInMonth;
+    for ($i = 0; $i < $daysInMonth; $i++) {
+      $calendarDays[] = $date->copy()->addDays($i);
+    }
 
     $attendances = Attendance::where('user_id', $id)
-      ->where('date', 'like', "$month%")
-      ->orderBy('date', 'asc')
-      ->get();
+      ->whereBetween('date', [$date->copy()->startOfMonth(), $date->copy()->endOfMonth()])
+      ->get()
+      ->keyBy(function ($item) {
+        return $item->date->format('Y-m-d');
+      });
 
-    return view('admin.attendance.staff', compact(
-      'user',
-      'attendances',
-      'month',
-      'date',
-      'prevMonth',
-      'nextMonth',
-    ));
+    return view('admin.attendance.staff', [
+      'user' => $user,
+      'attendances' => $attendances,
+      'calendarDays' => $calendarDays,
+      'date' => $date->format('Y-m-d'),
+    ]);
   }
 
   public function approveList(Request $request)
@@ -77,33 +80,49 @@ class AdminController extends Controller
   public function exportCsv(Request $request, $id)
   {
     $user = User::findOrFail($id);
-    $month = $request->query('month', now()->format('Y-m'));
+    $dateParam = $request->query('date') ?? $request->query('month') ?? now()->format('Y-m-d');
+    $date = Carbon::parse($dateParam)->startOfMonth();
+    $monthStr = $date->format('Y-m');
 
     $attendances = Attendance::where('user_id', $id)
-      ->where('date', 'like', "$month%")
-      ->orderBy('date', 'asc')
-      ->get();
+      ->whereBetween('date', [$date->copy()->startOfMonth(), $date->copy()->endOfMonth()])
+      ->get()
+      ->keyBy(function ($item) {
+        return $item->date->format('Y-m-d');
+      });
 
-    $response = new StreamedResponse(function () use ($user, $attendances) {
-
+    $response = new StreamedResponse(function () use ($user, $attendances, $date) {
       $handle = fopen('php://output', 'w');
-      stream_filter_append($handle, 'convert.iconv.UTF-8/CP932');
+      stream_filter_append($handle, 'convert.iconv.UTF-8/CP932//TRANSLIT');
       fputcsv($handle, ['日付', '出勤', '退勤', '休憩合計', '勤務合計']);
 
-      foreach ($attendances as $attendance) {
+      $daysInMonth = $date->daysInMonth;
+      for ($i = 0; $i < $daysInMonth; $i++) {
+        $currentDay = $date->copy()->addDays($i);
+        $currentDayStr = $currentDay->format('Y-m-d');
+        $attendance = $attendances->get($currentDayStr);
+
         fputcsv($handle, [
-          $attendance->date->format('Y/m/d'),
-          $attendance->clock_in ? $attendance->clock_in->format('H:i') : '',
-          $attendance->clock_out ? $attendance->clock_out->format('H:i') : '',
-          $attendance->total_rest_time,
-          $attendance->total_work_time,
+          $currentDay->format('Y/m/d'),
+          $attendance?->clock_in ? $attendance->clock_in->format('H:i') : '',
+          $attendance?->clock_out ? $attendance->clock_out->format('H:i') : '',
+          $attendance?->total_rest_time ?? '',
+          $attendance?->total_work_time ?? '',
         ]);
       }
       fclose($handle);
     });
-    $fileName = "{$user->name}さん勤怠_{$month}.csv";
-    $response->headers->set('Content-Type', 'text/csv');
-    $response->headers->set('Content-Disposition', 'attachment; filename="' . rawurlencode($fileName) . '"');
+
+    $fileName = "{$user->name}さん勤怠_{$monthStr}.csv";
+
+    foreach (
+      [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => "attachment; filename*=UTF-8''" . rawurlencode($fileName),
+      ] as $key => $value
+    ) {
+      $response->headers->set($key, $value);
+    }
 
     return $response;
   }

@@ -7,7 +7,9 @@
     @include('components.page-header', [
     'title' => \Carbon\Carbon::parse($date)->format('Y年n月j日') . 'の勤怠',
     'showDateNav' => true,
+    'navType' => 'day',
     'date' => $date,
+    'routeName' => 'admin.attendance.daily'
     ])
 
     <x-attendance-table>
