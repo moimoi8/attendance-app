@@ -152,11 +152,15 @@ class AttendanceController extends Controller
   {
     $user = Auth::user();
     $attendance = Attendance::findOrFail($id);
-    $formatTime = function ($time) {
+    $dateStr = $attendance->date->format('Y-m-d');
+    $formatTime = function ($time) use ($dateStr) {
       if (!$time) return null;
       $converted = mb_convert_kana($time, 'ka', 'UTF-8');
-      return str_replace(' ', '', $converted);
+      $cleanTime = str_replace(' ', '', $converted);
+
+      return $dateStr . ' ' . $cleanTime;
     };
+
     AttendanceCorrectRequest::updateOrCreate(
       ['attendance_id' => $id, 'user_id' => $user->id],
       [

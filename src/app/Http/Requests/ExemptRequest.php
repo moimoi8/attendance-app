@@ -17,6 +17,38 @@ class ExemptRequest extends FormRequest
     return true;
   }
 
+  protected function prepareForValidation()
+  {
+    $input = $this->all();
+
+    if ($this->has('clock_in')) {
+      $input['clock_in'] = mb_convert_kana($this->clock_in, 'as', 'UTF-8');
+    }
+
+    if ($this->has('clock_out')) {
+      $input['clock_out'] = mb_convert_kana($this->clock_out, 'as', 'UTF-8');
+    }
+
+    if ($this->has('rests')) {
+      $rests = [];
+      foreach ($this->rests as $id => $times) {
+        $rests[$id]['start'] = mb_convert_kana($times['start'] ?? '', 'as', 'UTF-8');
+        $rests[$id]['end'] = mb_convert_kana($times['end'] ?? '', 'as', 'UTF-8');
+      }
+      $input['rests'] = $rests;
+    }
+
+    if ($this->has('new_rests')) {
+      $newRests = [];
+      foreach ($this->new_rests as $index => $rest) {
+        $newRests[$index]['start'] = mb_convert_kana($rest['start'] ?? '', 'as', 'UTF-8');
+        $newRests[$index]['end'] = mb_convert_kana($rest['end'] ?? '', 'as', 'UTF-8');
+      }
+      $input['new_rests'] = $newRests;
+    }
+    $this->merge($input);
+  }
+
   /**
    * Get the validation rules that apply to the request.
    *
@@ -43,77 +75,85 @@ class ExemptRequest extends FormRequest
   public function withValidator($validator)
   {
     $validator->after(function ($validator) {
-      $clockInStr = $this->clock_in;
-      $clockOutStr = $this->clock_out;
-
-      if (!$clockInStr || !$clockOutStr) {
+      try {
+        $clockIn = Carbon::createFromFormat('H:i', $this->clock_in);
+        $clockOut = Carbon::createFromFormat('H:i', $this->clock_out);
+        if ($clockIn->greaterThanOrEqualTo($clockOut)) {
+          $validator->errors()->add('clock_in', '出勤時間もしくは退勤時間が不適切な値です');
+        }
+      } catch (\Exception $e) {
         $validator->errors()->add('clock_in', '出勤時間もしくは退勤時間が不適切な値です');
         return;
       }
 
-      $clockIn = Carbon::createFromFormat('H:i', $clockInStr);
-      $clockOut = Carbon::createFromFormat('H:i', $clockOutStr);
+      if ($this->has('rests')) {
+        foreach ($this->rests as $id => $times) {
+          $startStr = $times['start'] ?? '';
+          $endStr = $times['end'] ?? '';
 
-      if ($clockIn->greaterThanOrEqualTo($clockOut)) {
-        $validator->errors()->add('clock_in', '出勤時間もしくは退勤時間が不適切な値です');
-      }
+          if ($startStr === '' && $endStr === '') continue;
 
-      foreach ($this->all() as $key => $value) {
-        if (preg_match('/^rest(\d+)_start$/', $key, $matches)) {
-          $index = $matches[1];
-          $restStartStr = $value;
-          $restEndStr = $this->input("rest{$index}_end");
+          $errorKey = "rests.{$id}.start";
 
-          if ($restStartStr || $restEndStr) {
-            if (!$restStartStr || !$restEndStr) {
-              $validator->errors()->add("rest{$index}_start", '休憩時間もしくは退勤時間が不適切な値です');
-              continue;
-            }
+          if ($startStr === '' || $endStr === '') {
+            $validator->errors()->add($errorKey, '休憩時間が不適切な値です');
+            continue;
+          }
 
-            $restStart = Carbon::createFromFormat('H:i', $restStartStr);
-            $restEnd = Carbon::createFromFormat('H:i', $restEndStr);
-
-            if ($restStart->lessThan($clockIn) || $restStart->greaterThan($clockOut)) {
-              $validator->errors()->add("rest{$index}_start", '休憩時間もしくは退勤時間が不適切な値です');
-            }
-
-            if ($restEnd->greaterThan($clockOut)) {
-              $validator->errors()->add("rest{$index}_start", '休憩時間もしくは退勤時間が不適切な値です');
-            }
-
-            if ($restStart->greaterThanOrEqualTo($restEnd)) {
-              $validator->errors()->add("rest{$index}_start", '休憩時間が不適切です');
-            }
+          try {
+            $restStart = Carbon::createFromFormat('H:i', $startStr);
+            $restEnd = Carbon::createFromFormat('H:i', $endStr);
+            $this->validateRestTimes($validator, $restStart, $restEnd, $clockIn, $clockOut, $errorKey);
+          } catch (\Exception $e) {
+            $validator->errors()->add($errorKey, '休憩時間が不適切な値です');
           }
         }
       }
 
       if ($this->has('new_rests')) {
         foreach ($this->new_rests as $index => $rest) {
-          $restStartStr = $rest['start'] ?? null;
-          $restEndStr = $rest['end'] ?? null;
+          $startStr = $rest['start'] ?? '';
+          $endStr = $rest['end'] ?? '';
 
-          if ($restStartStr || $restEndStr) {
-            $validator->errors()->add("new_rests.{$index}.start", '休憩時間もしくは退勤時間が不適切な値です');
+          if ($startStr === '' && $endStr === '') continue;
+          if ($startStr === '' || $endStr === '') {
+            $validator->errors()->add("new_rests.{$index}.start", '休憩時間が不適切な値です');
             continue;
           }
 
-          $restStart = Carbon::createFromFormat('H:i', $restStartStr);
-          $restEnd = Carbon::createFromFormat('H:i', $restEndStr);
-
-          if ($restStart->lessThan($clockIn) || $restStart->greaterThan($clockOut)) {
-            $validator->errors()->add("new_rests.{$index}.start", '休憩時間もしくは退勤時間が不適切な値です');
-          }
-
-          if ($restEnd->greaterThan($clockOut)) {
-            $validator->errors()->add("new_rests.{$index}.start", '休憩時間もしくは退勤時間が不適切な値です');
-          }
-
-          if ($restStart->greaterThanOrEqualTo($restEnd)) {
+          try {
+            $restStart = Carbon::createFromFormat('H:i', $startStr);
+            $restEnd = Carbon::createFromFormat('H:i', $endStr);
+            $this->validateRestTimes($validator, $restStart, $restEnd, $clockIn, $clockOut, "new_rests.{$index}.start");
+          } catch (\Exception $e) {
             $validator->errors()->add("new_rests.{$index}.start", '休憩時間が不適切です');
           }
         }
       }
     });
+  }
+
+  public function validateRestTimes($validator, $restStart, $restEnd, $clockIn, $clockOut, $errorKey)
+  {
+    if ($restStart->lessThan($clockIn) || $restStart->greaterThan($clockOut)) {
+      $validator->errors()->add($errorKey, '休憩時間が不適切な値です');
+      return;
+    }
+    if ($restEnd->greaterThan($clockOut)) {
+      $validator->errors()->add($errorKey, '休憩時間もしくは退勤時間が不適切な値です');
+      return;
+    }
+    if ($restStart->greaterThanOrEqualTo($restEnd)) {
+      $validator->errors()->add($errorKey, '休憩時間が不適切な値です');
+    }
+  }
+
+  public function getRedirectUrl()
+  {
+    if ($this->is('admin/*')) {
+      return route('admin.attendance.detail', ['id' => $this->route('id')]);
+    }
+
+    return parent::getRedirectUrl();
   }
 }

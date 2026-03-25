@@ -5,7 +5,7 @@
   width: 100%;
   max-width: 900px;
   margin: 20px auto 20px;
-  border: 2px solid #e1e1e1e1;
+  border: 2px solid #e1e1e1;
   background-color: #ffffff;
   border-radius: 10px;
 }
@@ -23,7 +23,6 @@
 
 .attendance-detail__row--description {
   min-height: 106px;
-  height: auto;
   border-bottom: none;
   padding-bottom: 20px;
 }
@@ -34,7 +33,6 @@
   font-weight: bold;
   color: #737373;
   width: 200px;
-  display: inline-block;
 }
 
 .attendance-detail__content {
@@ -42,7 +40,7 @@
   font-weight: bold;
   color: #000000;
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   margin-left: 50px;
@@ -58,7 +56,15 @@
 .attendance-detail__value {
   width: auto;
   min-width: 60px;
-  padding-left: 15px;
+  padding-left: 20px;
+  text-align: center;
+}
+
+.attendance-detail__value--text {
+  display: inline-block;
+  width: 103px;
+  margin-left: 5px;
+  margin-right: 20px;
   text-align: center;
 }
 
@@ -68,14 +74,21 @@
   min-width: 20px;
   display: inline-block;
   text-align: center;
-  padding-left: 10px;
+  padding-left: 15px;
 }
 
 .attendance-detail__group {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.attendance-detail__date-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
+  max-width: 260px;
 }
 
 .attendance-detail__inputs {
@@ -90,17 +103,11 @@
 }
 
 .attendance-detail__value {
-  width: 100%;
+  display: inline-block;
+  color: #000000;
+  width: 103px;
+  font-size: 16px;
   font-weight: bold;
-  width: 80px;
-  text-align: left;
-  padding-left: 10px;
-  white-space: nowrap;
-}
-
-.attendance-detail__input
-.attendance-detail__value {
-  width: 103px !important;
   text-align: center;
   padding-left: 0;
 }
@@ -110,16 +117,14 @@
   text-align: center;
 }
 
-.attendance-detail__value--sub {
-  width: 100px;
-}
-
 .attendance-detail__text {
   margin-left: 10px;
   font-weight: bold;
 }
 
-.attendance-detail__input {
+.attendance-detail__input-field {
+  width: 103px;
+  height: 28px;
   border: 1px solid #e1e1e1;
   border-radius: 4px;
   background: #ffffff;
@@ -166,6 +171,7 @@
 }
 
 .attendance-detail__error-message {
+  flex-basis: 100%;
   color: #ff0000;
   opacity: 0.5;
   font-size: 18px;
@@ -177,14 +183,22 @@
 .attendance-detail__user-name {
   width: auto;
   white-space: nowrap;
-  padding-left: 10px;
+  margin-left: 20px;
 }
 
 .attendance-detail__year {
+  width: 103px;
+  text-align: center;
   padding-left: 10px;
+  margin-right: 30px;
 }
 
 .attendance-detail__date {
-  padding-left: 10px;
+  width: 103px;
+  padding-left: 30px;
+  text-align: center;
 }
 
+.attendance-detail__text {
+  padding-left: 10px;
+}

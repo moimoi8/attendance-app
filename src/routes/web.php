@@ -67,7 +67,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::patch('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminController::class, 'approveUpdate'])->name('admin.approve.update');
 
-    Route::patch('/attendance/update/{id}', [AttendanceController::class, 'update'])->name('admin.attendance.update');
+    Route::patch('/attendance/update/{id}', [AdminController::class, 'update'])->name('admin.attendance.update');
 
     Route::get('/staff/export/{id}', [AdminController::class, 'exportCsv'])->name('admin.staff.export');
   });

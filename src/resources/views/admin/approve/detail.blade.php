@@ -26,22 +26,23 @@
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">日付</label>
           <div class="attendance-detail__content">
-            <span class="attendance-detail__value attendance-detail__year">
-              {{ $application->attendance->date->format('Y年') }}</span>
-            <span class="attendance-detail__separator"></span>
-            <span class="attendance-detail__value attendance-detail__date">
-              {{ $application->attendance->date->format('n月j日') }}</span>
+            <div class="attendance-detail__group attendance-detail__date-wrapper">
+              <span class="attendance-detail__value attendance-detail__year">
+                {{ $application->attendance->date->format('Y年') }}</span>
+              <span class="attendance-detail__value attendance-detail__date">
+                {{ $application->attendance->date->format('n月j日') }}</span>
+            </div>
           </div>
         </div>
 
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">出勤・退勤</label>
           <div class="attendance-detail__content attendance-detail__content--view">
-            <span class="attendance-detail__value">
+            <span class="attendance-detail__value attendance-detail__value--text">
               {{ optional($application->requested_clock_in)->format('H:i') }}
             </span>
             <span class="attendance-detail__separator">～</span>
-            <span class="attendance-detail__value">
+            <span class="attendance-detail__value attendance-detail__value--text">
               {{ optional($application->requested_clock_out)->format('H:i') }}
             </span>
           </div>
@@ -51,11 +52,11 @@
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">休憩{{ $index + 1 }}</label>
           <div class="attendance-detail__content attendance-detail__content--view">
-            <span class="attendance-detail__value">
+            <span class="attendance-detail__value attendance-detail__value--text">
               {{ $rest->start_time?->format('H:i') }}
             </span>
             <span class="attendance-detail__separator">～</span>
-            <span class="attendance-detail__value">
+            <span class="attendance-detail__value attendance-detail__value--text">
               {{ $rest->end_time?->format('H:i') }}
             </span>
           </div>

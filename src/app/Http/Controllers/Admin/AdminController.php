@@ -9,6 +9,7 @@ use App\Models\Attendance;
 use App\Models\User;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\AttendanceCorrectRequest;
+use App\Http\Requests\ExemptRequest;
 
 class AdminController extends Controller
 {
@@ -127,7 +128,7 @@ class AdminController extends Controller
     return $response;
   }
 
-  public function update(Request $request, $id)
+  public function update(ExemptRequest $request, $id)
   {
     $attendance = Attendance::findOrFail($id);
 
@@ -157,7 +158,7 @@ class AdminController extends Controller
     }
 
     return redirect()
-      ->route('admin.attendance.show', ['id' => $attendance->id])
+      ->route('admin.attendance.daily')
       ->with('message', '勤怠情報を修正しました');
   }
 
@@ -172,13 +173,24 @@ class AdminController extends Controller
   public function approveUpdate(Request $request, $attendance_correct_request_id)
   {
     $application = AttendanceCorrectRequest::findOrFail($attendance_correct_request_id);
-
     $attendance = $application->attendance;
 
     $attendance->update([
       'clock_in' => $application->requested_clock_in,
       'clock_out' => $application->requested_clock_out,
     ]);
+
+    if ($application->restCorrectRequests) {
+      foreach ($application->restCorrectRequests as $restRequest) {
+        $attendance->rests()->updateOrCreate(
+          ['id' => $restRequest->rest_id],
+          [
+            'start_time' => $restRequest->requested_start_time,
+            'end_time' => $restRequest->requested_end_time,
+          ]
+        );
+      }
+    }
 
     $application->update([
       'status' => 2
