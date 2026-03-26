@@ -40,7 +40,7 @@
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">出勤・退勤</label>
           <div class="attendance-detail__content attendance-detail__content--view">
-            @if($attendance->correctRequest?->status == 1)
+            @if(in_array($attendance->correctRequest?->status, [1, 2]))
             <span class="attendance-detail__value attendance-detail__value--text">
               {{ $attendance->correctRequest->requested_clock_in->format('H:i') }}
             </span>
@@ -69,7 +69,7 @@
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">休憩{{ $index + 1 }}</label>
           <div class="attendance-detail__content attendance-detail__content--view">
-            @if($attendance->correctRequest?->status == 1)
+            @if(in_array($attendance->correctRequest?->status, [1, 2]))
             <span class="attendance-detail__value attendance-detail__value--text">
               {{ $rest->start_time?->format('H:i') }}
             </span>
@@ -95,7 +95,7 @@
         </div>
         @endforeach
 
-        @if(!($attendance->correctRequest?->status == 1))
+        @if(!in_array($attendance->correctRequest?->status, [1, 2]))
         <div class="attendance-detail__row attendance-detail__row--auto">
           @php $nextIndex = $attendance->rests->count() + 1; @endphp
           <label class="attendance-detail__label">休憩{{ $nextIndex }}</label>
@@ -117,7 +117,7 @@
         <div class="attendance-detail__row attendance-detail__row--description">
           <label class="attendance-detail__label">備考</label>
           <div class="attendance-detail__content">
-            @if($attendance->correctRequest?->status == 1)
+            @if(in_array($attendance->correctRequest?->status, [1, 2]))
             <p class="attendance-detail__text">
               {!! nl2br(e($attendance->correctRequest->reason)) !!}
             </p>
@@ -136,10 +136,11 @@
       </div>
 
       <div class="attendance-detail__actions">
-        @if($attendance->correctRequest && $attendance->correctRequest->status == 1)
+        @if($attendance->correctRequest?->status == 1)
         <p class="attendance-detail__error-message" style="text-align: right;">
           *承認待ちのため修正はできません。
         </p>
+        @elseif($attendance->correctRequest?->status == 2)
         @else
         <x-black-button type="submit">修正</x-black-button>
         @endif

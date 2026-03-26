@@ -18,7 +18,7 @@ class AttendanceController extends Controller
     $user = Auth::user();
     $today = Carbon::now()->format('Y-m-d');
     $attendance = Attendance::where('user_id', $user->id)
-      ->where('date', $today)
+      ->whereDate('date', $today)
       ->first();
 
     $is_clocked_out = $attendance && $attendance->clock_out ? true : false;
@@ -62,6 +62,10 @@ class AttendanceController extends Controller
   public function start()
   {
     $user = Auth::user();
+    /** @var App\Models\User $user */
+    $user->work_status_id = 2;
+    $user->save();
+
     $now = Carbon::now();
     $existinAttendance = Attendance::where('user_id', $user->id)
       ->where('date', $now->format('Y-m-d'))
@@ -76,15 +80,21 @@ class AttendanceController extends Controller
       'clock_in' => $now->format('H:i:s'),
     ]);
 
+    $user->update(['work_status_id' => 2]);
+
     return redirect()->back()->with('message', '出勤しました!');
   }
 
   public function end()
   {
     $user = Auth::user();
+    /** @var App\Models\User $user */
+    $user->work_status_id = 4;
+    $user->save();
+
     $now = Carbon::now();
     $attendance = Attendance::where('user_id', $user->id)
-      ->where('date', $now->format('Y-m-d'))
+      ->whereDate('date', $now->format('Y-m-d'))
       ->whereNull('clock_out')
       ->first();
 
@@ -101,9 +111,13 @@ class AttendanceController extends Controller
   public function restStart()
   {
     $user = Auth::user();
+    /** @var \App\Models\User $user */
+    $user->work_status_id = 3;
+    $user->save();
+
     $today = Carbon::now()->format('Y-m-d');
     $attendance = Attendance::where('user_id', $user->id)
-      ->where('date', $today)
+      ->whereDate('date', $today)
       ->whereNull('clock_out')
       ->first();
 
@@ -120,9 +134,13 @@ class AttendanceController extends Controller
   public function restEnd()
   {
     $user = Auth::user();
+    /** @var \App\Models\User $user */
+    $user->work_status_id = 2;
+    $user->save();
+
     $today = Carbon::now()->format('Y-m-d');
     $attendance = Attendance::where('user_id', $user->id)
-      ->where('date', $today)
+      ->whereDate('date', $today)
       ->first();
 
     if ($attendance) {
@@ -150,8 +168,11 @@ class AttendanceController extends Controller
 
   public function update(ExemptRequest $request, $id)
   {
-    $user = Auth::user();
     $attendance = Attendance::findOrFail($id);
+    if (in_array($attendance->correctRequest?->status, [1, 2])) {
+      return redirect()->back()->with('error', 'この申請は現在変更できません');
+    }
+    $user = Auth::user();
     $dateStr = $attendance->date->format('Y-m-d');
     $formatTime = function ($time) use ($dateStr) {
       if (!$time) return null;
