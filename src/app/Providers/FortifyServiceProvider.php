@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\VerifyEmailResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -49,6 +50,17 @@ class FortifyServiceProvider extends ServiceProvider
 
     Fortify::loginView(function () {
       return view('auth.login');
+    });
+
+    Fortify::verifyEmailView(function () {
+      return view('auth.verify-email');
+    });
+
+    $this->app->instance(VerifyEmailResponse::class, new class implements VerifyEmailResponse {
+      public function toResponse($request)
+      {
+        return redirect('attendance.punch');
+      }
     });
   }
 }

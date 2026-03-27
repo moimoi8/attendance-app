@@ -28,3 +28,69 @@
   font-size: 20px;
 }
 
+.verify-email {
+  padding-top: 237px;
+  text-align: center;
+  background-color: #ffffff;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.verify-email__inner {
+  display: inline-block;
+  width: 720px;
+}
+
+.verify-email__text {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+  margin-bottom: 62px;
+  color: #000000;
+}
+
+.verify-email__btn-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 52px;
+  width: 257px;
+  height: 69px;
+  background-color: #d9d9d9;
+  color: #000000;
+  font-size: 24px;
+  font-weight: bold;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.verify-email__btn-confirm {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+
+.verify-email__btn-wrap:hover {
+  opacity: 0.8;
+}
+
+.verify-email__resend-link {
+  background: none;
+  border: none;
+  color: #0073cc;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+}
+

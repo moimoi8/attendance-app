@@ -16,7 +16,7 @@ class AdminController extends Controller
   public function index(Request $request)
   {
     $date = $request->query('date', Carbon::today()->format('Y-m-d'));
-    $attendances = Attendance::with('user')->where('date', $date)->get();
+    $attendances = Attendance::with('user')->whereDate('date', $date)->get();
 
     return view('admin.attendance.daily', compact('date', 'attendances'));
   }

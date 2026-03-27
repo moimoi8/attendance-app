@@ -22,7 +22,7 @@
           <img src="{{ asset('images/header-logo.png') }}" alt="COACHTECH" class="header__logo-img">
         </a>
       </div>
-      @if( !in_array(Route::currentRouteName(), ['register', 'login']) )
+      @if( !in_array(Route::currentRouteName(), ['register', 'login', 'verify-email']) )
 
       <nav class="header__nav">
         <ul class="header__nav-list">
