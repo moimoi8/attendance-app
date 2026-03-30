@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AuthTest extends TestCase
 {
@@ -117,5 +118,65 @@ class AuthTest extends TestCase
     $this->assertAuthenticatedAs($user);
 
     $response->assertStatus(302);
+  }
+
+  public function test_verification_email_is_sent_after_registration()
+  {
+    DB::statement('PRAGMA foreign_keys = OFF');
+    // $this->withExceptionHandling();
+    \Illuminate\Support\Facades\Notification::fake();
+
+    $response = $this->post('/register', [
+      'name' => 'テスト太郎',
+      'email' => 'verify-test@example.com',
+      'password' => 'password123',
+      'password_confirmation' => 'password123',
+    ]);
+
+    $response->assertStatus(302);
+
+    $this->assertDatabaseHas('users', ['email' => 'verify-test@example.com']);
+
+    $user = User::where('email', 'verify-test@example.com')->first();
+    \Illuminate\Support\Facades\Notification::assertSentTo(
+      $user,
+      \Illuminate\Auth\Notifications\VerifyEmail::class
+    );
+  }
+
+  public function test_unverified_user_is_redirected_to_verify_notice_screen()
+  {
+    DB::statement('PRAGMA foreign_keys = OFF');
+    $user = User::factory()->create([
+      'email_verified_at' => null,
+      'role' => 'user',
+    ]);
+
+    $this->post('/login', [
+      'email' => $user->email,
+      'password' => 'password',
+    ]);
+    $response = $this->get('/attendance');
+    $response->assertRedirect('/email/verify');
+  }
+
+  public function test_verification_email_can_be_resent()
+  {
+    \Illuminate\Support\Facades\Notification::fake();
+
+    DB::statement('PRAGMA foreign_keys = OFF');
+    $user = User::factory()->create([
+      'email_verified_at' => null,
+      'role' => 'user',
+    ]);
+
+    $response = $this->actingAs($user)->post('/email/verification-notification');
+
+    \Illuminate\Support\Facades\Notification::assertSentTo(
+      $user,
+      \Illuminate\Auth\Notifications\VerifyEmail::class
+    );
+
+    $response->assertSessionHas('status', 'verification-link-sent');
   }
 }

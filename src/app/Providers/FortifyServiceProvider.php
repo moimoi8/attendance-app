@@ -8,11 +8,11 @@ use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
-use Laravel\Fortify\Contracts\VerifyEmailResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -21,7 +21,10 @@ class FortifyServiceProvider extends ServiceProvider
    */
   public function register(): void
   {
-    //
+    $this->app->singleton(
+      \Laravel\Fortify\Contracts\CreatesNewUsers::class,
+      \App\Actions\Fortify\CreateNewUser::class
+    );
   }
 
   /**
@@ -49,17 +52,26 @@ class FortifyServiceProvider extends ServiceProvider
     });
 
     Fortify::loginView(function () {
-      return view('auth.login');
+      return view('auth.login', ['isAdmin' => false]);
     });
 
     Fortify::verifyEmailView(function () {
       return view('auth.verify-email');
     });
 
-    $this->app->instance(VerifyEmailResponse::class, new class implements VerifyEmailResponse {
+    $this->app->instance(\Laravel\Fortify\Contracts\LoginResponse::class, new class implements \Laravel\Fortify\Contracts\LoginResponse {
       public function toResponse($request)
       {
-        return redirect('attendance.punch');
+        $role = Auth::user()->role;
+        $redirect = ($role === 'admin') ? '/admin/attendance/list' : '/attendance';
+        return redirect()->intended($redirect);
+      }
+    });
+
+    $this->app->instance(\Laravel\Fortify\Contracts\VerifyEmailResponse::class, new class implements \Laravel\Fortify\Contracts\VerifyEmailResponse {
+      public function toResponse($request)
+      {
+        return redirect('/attendance')->with('verified', true);
       }
     });
   }

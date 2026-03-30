@@ -10,9 +10,20 @@ use App\Models\User;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\AttendanceCorrectRequest;
 use App\Http\Requests\ExemptRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
+  public function __construct()
+  {
+    $this->middleware(function ($request, $next) {
+      if (Auth::user()->role !== 'admin') {
+        abort(403, '管理者以外立ち入り禁止');
+      }
+      return $next($request);
+    });
+  }
+
   public function index(Request $request)
   {
     $date = $request->query('date', Carbon::today()->format('Y-m-d'));

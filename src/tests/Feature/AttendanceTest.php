@@ -443,10 +443,11 @@ class AttendanceTest extends TestCase
       'status' => 2,
     ]);
 
+    $targetDate = '2026-03-27';
     $this->assertDatabaseHas('attendances', [
       'id' => $attendance->id,
-      'clock_in' => now()->format('Y-m-d') . ' 08:30:00',
-      'clock_out' => now()->format('Y-m-d') . ' 17:30:00',
+      'clock_in' => $targetDate . ' 08:30:00',
+      'clock_out' => $targetDate . ' 17:30:00',
     ]);
   }
 
@@ -455,7 +456,9 @@ class AttendanceTest extends TestCase
     DB::statement('PRAGMA foreign_keys = OFF');
 
     /** @var \App\Models\User $user */
-    $user = User::factory()->create();
+    $user = User::factory()->create([
+      'role' => 'admin',
+    ]);
 
     $attendance = Attendance::create([
       'user_id' => $user->id,
