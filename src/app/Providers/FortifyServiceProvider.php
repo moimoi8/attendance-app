@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Auth\Events\Login;
+use Laravel\Fortify\Http\Requests\RegisterRequest as FortifyRegisterRequest;
+use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -32,6 +38,11 @@ class FortifyServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
+
+    $this->app->bind(FortifyRegisterRequest::class, RegisterRequest::class);
+
+    $this->app->bind(FortifyLoginRequest::class, LoginRequest::class);
+
     Fortify::createUsersUsing(CreateNewUser::class);
     Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
     Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
