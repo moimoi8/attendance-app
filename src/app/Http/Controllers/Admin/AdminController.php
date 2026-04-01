@@ -14,15 +14,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-  public function __construct()
-  {
-    $this->middleware(function ($request, $next) {
-      if (Auth::user()->role !== 'admin') {
-        abort(403, '管理者以外立ち入り禁止');
-      }
-      return $next($request);
-    });
-  }
 
   public function index(Request $request)
   {
@@ -69,7 +60,7 @@ class AdminController extends Controller
   public function approveList(Request $request)
   {
     $tab = $request->query('tab', 'pending');
-    $query = AttendanceCorrectRequest::with(['user', 'attendance']);
+    $query = AttendanceCorrectRequest::with(['user', 'attendance', 'restCorrectRequests']);
 
     if ($tab === 'approved') {
       $query->where('status', 2);
@@ -183,7 +174,7 @@ class AdminController extends Controller
 
   public function approveUpdate(Request $request, $attendance_correct_request_id)
   {
-    $application = AttendanceCorrectRequest::findOrFail($attendance_correct_request_id);
+    $application = AttendanceCorrectRequest::with('restCorrectRequests')->findOrFail($attendance_correct_request_id);
     $attendance = $application->attendance;
 
     $attendance->update([
@@ -191,16 +182,14 @@ class AdminController extends Controller
       'clock_out' => $application->requested_clock_out,
     ]);
 
-    if ($application->restCorrectRequests) {
-      foreach ($application->restCorrectRequests as $restRequest) {
-        $attendance->rests()->updateOrCreate(
-          ['id' => $restRequest->rest_id],
-          [
-            'start_time' => $restRequest->requested_start_time,
-            'end_time' => $restRequest->requested_end_time,
-          ]
-        );
-      }
+    foreach ($application->restCorrectRequests as $restRequest) {
+      $attendance->rests()->updateOrCreate(
+        ['id' => $restRequest->rest_id],
+        [
+          'start_time' => $restRequest->requested_rest_start,
+          'end_time' => $restRequest->requested_rest_end,
+        ]
+      );
     }
 
     $application->update([

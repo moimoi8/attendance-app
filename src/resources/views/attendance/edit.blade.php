@@ -70,12 +70,16 @@
           <label class="attendance-detail__label">休憩{{ $index + 1 }}</label>
           <div class="attendance-detail__content attendance-detail__content--view">
             @if(in_array($attendance->correctRequest?->status, [1, 2]))
+            @php
+            $requestedRest = $attendance->correctRequest->restCorrectRequests
+            ->where('rest_id', $rest->id)->first();
+            @endphp
             <span class="attendance-detail__value attendance-detail__value--text">
-              {{ $rest->start_time?->format('H:i') }}
+              {{ $requestedRest ? $requestedRest->requested_start_time->format('H:i') : $rest->start_time?->format('H:i') }}
             </span>
             <span class="attendance-detail__separator">～</span>
             <span class="attendance-detail__value attendance-detail__value--text">
-              {{ $rest->end_time?->format('H:i') }}
+              {{ $requestedRest ? $requestedRest->requested_end_time->format('H:i') : $rest->end_time?->format('H:i') }}
             </span>
             @else
             <div class="attendance-detail__input-group">

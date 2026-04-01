@@ -16,11 +16,15 @@ use App\Http\Controllers\Admin\AdminController;
 */
 
 Route::get('/', function () {
-  return auth()->check() ? redirect('/attendance') : redirect('/login');
+  if (auth()->check()) {
+    return auth()->user()->role === 'admin'
+      ? redirect()->route('admin.attendance.daily')
+      : redirect()->route('attendance.punch');
+  }
+  return redirect('/login');
 });
 
 Route::middleware(['auth'])->group(function () {
-
   Route::prefix('admin')->group(function () {
     Route::get('/attendance/list', [AdminController::class, 'index'])->name('admin.attendance.daily');
 

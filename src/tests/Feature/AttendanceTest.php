@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\WorkStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectRequest;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
@@ -21,6 +22,18 @@ class AttendanceTest extends TestCase
    */
 
   use RefreshDatabase;
+
+  public function setUp(): void
+  {
+    parent::setUp();
+    Carbon::setTestNow('2026-04-01 10:00:00');
+  }
+
+  public function tearDown(): void
+  {
+    Carbon::setTestNow();
+    parent::tearDown();
+  }
 
   public function test_current_date_is_displayed_correctly()
   {
@@ -357,7 +370,7 @@ class AttendanceTest extends TestCase
       'date' => now()->format('Y-m-d'),
       'clock_in' => '09:00:00',
       'clock_out' => '18:00:00',
-      'wor_status_id' => 1,
+      'work_status_id' => 1,
     ]);
 
     $response = $this->actingAs($user)->patch(route('attendance.update', ['id' => $attendance->id]), [
@@ -529,15 +542,18 @@ class AttendanceTest extends TestCase
     $admin = User::factory()->create(['role' => 'admin']);
     $staff = User::factory()->create(['name' => 'テストスタッフ']);
 
-    $today = '2026-03-27';
+    $targetDate = '2026-03-27';
     Attendance::create([
       'user_id' => $staff->id,
-      'date' => $today,
-      'clock_in' => $today . ' 09:00:00',
-      'clock_out' => $today . ' 18:00:00',
+      'date' => $targetDate,
+      'clock_in' => $targetDate . ' 09:00:00',
+      'clock_out' => $targetDate . ' 18:00:00',
     ]);
 
-    $response = $this->actingAs($admin)->get(route('admin.attendance.staff', ['id' => $staff->id]));
+    $response = $this->actingAs($admin)->get(route('admin.attendance.staff', [
+      'id' => $staff->id,
+      'date' => '2026-03-01'
+    ]));
     $response->assertStatus(200);
     $response->assertSee('テストスタッフ');
     $response->assertSee('09:00');

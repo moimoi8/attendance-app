@@ -48,16 +48,16 @@
           </div>
         </div>
 
-        @foreach($attendance->rests as $index => $rest)
+        @foreach($application->restCorrectRequests as $index => $restRequest)
         <div class="attendance-detail__row attendance-detail__row--auto">
           <label class="attendance-detail__label">休憩{{ $index + 1 }}</label>
           <div class="attendance-detail__content attendance-detail__content--view">
             <span class="attendance-detail__value attendance-detail__value--text">
-              {{ $rest->start_time?->format('H:i') }}
+              {{ $restRequest->requested_start_time ? $restRequest->requested_start_time->format('H:i') : '' }}
             </span>
             <span class="attendance-detail__separator">～</span>
             <span class="attendance-detail__value attendance-detail__value--text">
-              {{ $rest->end_time?->format('H:i') }}
+              {{ $restRequest->requested_end_time ? $restRequest->requested_end_time->format('H:i') : '' }}
             </span>
           </div>
         </div>

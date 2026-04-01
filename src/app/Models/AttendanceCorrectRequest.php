@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\RestCorrectRequest;
 
 class AttendanceCorrectRequest extends Model
 {
@@ -33,5 +34,10 @@ class AttendanceCorrectRequest extends Model
   public function attendance()
   {
     return $this->belongsTo(Attendance::class);
+  }
+
+  public function restCorrectRequests()
+  {
+    return $this->hasMany(RestCorrectRequest::class);
   }
 }
