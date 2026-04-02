@@ -63,6 +63,7 @@ docker-compose exec php php artisan db:seed
 ## テーブル仕様
 ### usersテーブル
 | カラム名 | 型 | primary key | unique key |
+| --- | --- | --- | --- |
 | id | bigint | ○ | --- |
 | name | varchar(255) | --- | --- |
 | email | varchar(255) | --- | ○ |
@@ -75,6 +76,7 @@ docker-compose exec php php artisan db:seed
 
 ### attendanceテーブル
 | カラム名 | 型 | primary key | unique key |
+| --- | --- | --- | --- |
 | id | bigint | ○ | --- |
 | user_id | bigint | --- | --- |
 | date | date | --- | --- |
@@ -83,6 +85,7 @@ docker-compose exec php php artisan db:seed
 
 ### restsテーブル
 | カラム名 | 型 | primary key | unique key |
+| --- | --- | --- | --- |
 | id | bigint | ○ | --- |
 | attendance_id | bigint | --- | --- |
 | start_time | time | --- | --- |
@@ -90,6 +93,7 @@ docker-compose exec php php artisan db:seed
 
 ### attendance_correct_requestsテーブル
 | カラム名 | 型 | primary key | unique key |
+| --- | --- | --- | --- |
 | id | bigint | ○ | --- |
 | user_id | bigint | --- | --- |
 | attendance_id | bigint | --- | --- |
@@ -101,6 +105,7 @@ docker-compose exec php php artisan db:seed
 
 ### rest_correct_requestsテーブル
 | カラム名 | 型 | primary key | unique key |
+| --- | --- | --- | --- |
 | id | bigint | ○ | --- |
 | attendance_correct_request_id | bigint | --- | --- |
 | start_time | time | --- | --- |
