@@ -44,6 +44,7 @@ class AdminController extends Controller
 
     $attendances = Attendance::where('user_id', $id)
       ->whereBetween('date', [$date->copy()->startOfMonth(), $date->copy()->endOfMonth()])
+      ->with('rests')
       ->get()
       ->keyBy(function ($item) {
         return $item->date->format('Y-m-d');
@@ -159,8 +160,10 @@ class AdminController extends Controller
       ]);
     }
 
+    $staffId = $attendance->user_id;
+
     return redirect()
-      ->route('admin.attendance.daily')
+      ->route('admin.attendance.staff', ['id' => $staffId])
       ->with('message', '勤怠情報を修正しました');
   }
 
@@ -183,13 +186,15 @@ class AdminController extends Controller
     ]);
 
     foreach ($application->restCorrectRequests as $restRequest) {
-      $attendance->rests()->updateOrCreate(
-        ['id' => $restRequest->rest_id],
-        [
-          'start_time' => $restRequest->requested_rest_start,
-          'end_time' => $restRequest->requested_rest_end,
-        ]
-      );
+      if ($restRequest->requested_rest_start && $restRequest->requested_rest_end) {
+        $attendance->rests()->updateOrCreate(
+          ['id' => $restRequest->rest_id],
+          [
+            'start_time' => $restRequest->requested_rest_start,
+            'end_time' => $restRequest->requested_rest_end,
+          ]
+        );
+      }
     }
 
     $application->update([

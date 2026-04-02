@@ -39,7 +39,7 @@
         <td class="attendance-table__item">{{ $attendance?->total_work_time ?? '' }}</td>
         <td class="attendance-table__item">
 
-          <a href="{{ route('attendance.edit', ['id' => $attendance->id ?? 0, 'date' => $day->format('Y-m-d')]) }}" class="attendance-table__link">詳細</a>
+          <a href="{{ route('admin.attendance.detail', ['id' => $attendance->id ?? 0, 'date' => $day->format('Y-m-d')]) }}" class="attendance-table__link">詳細</a>
         </td>
       </tr>
       @endforeach

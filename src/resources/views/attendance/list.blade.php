@@ -29,12 +29,17 @@
       @php
       $currentDayStr = $day->format('Y-m-d');
       $attendance = $attendances->get($currentDayStr);
+      $pending = $attendance?->correctRequest;
+      $isPending = ($pending && $pending->status == 1);
+      $clockIn = $isPending ? \Carbon\Carbon::parse($pending->requested_clock_in)->format('H:i') : $attendance?->clock_in?->format('H:i');
+      $clockOut = $isPending ? \Carbon\Carbon::parse($pending->requested_clock_out)->format('H:i') : $attendance?->clock_out?->format('H:i');
+
       @endphp
 
       <tr class="attendance-table__row">
         <td class="attendance-table__item">{{ $day->isoFormat('MM/DD(ddd)') }}</td>
-        <td class="attendance-table__item">{{ $attendance?->clock_in?->format('H:i') ?? '' }}</td>
-        <td class="attendance-table__item">{{ $attendance?->clock_out?->format('H:i') ?? '' }}</td>
+        <td class="attendance-table__item">{{ $clockIn ?? '' }}</td>
+        <td class="attendance-table__item">{{ $clockOut ?? '' }}</td>
         <td class="attendance-table__item">{{ $attendance?->total_rest_time ?? '' }}</td>
         <td class="attendance-table__item">{{ $attendance?->total_work_time ?? '' }}</td>
         <td class="attendance-table__item">

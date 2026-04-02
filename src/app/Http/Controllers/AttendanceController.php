@@ -254,6 +254,9 @@ class AttendanceController extends Controller
     } else {
       $attendances = Attendance::where('user_id', $user->id)
         ->whereBetween('date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])
+        ->with(['correctRequest' => function ($query) {
+          $query->where('status', 1);
+        }])
         ->get()
         ->keyBy(function ($item) {
           return Carbon::parse($item->date)->format('Y-m-d');
