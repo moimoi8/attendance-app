@@ -2,16 +2,14 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use App\Models\User;
-use App\Models\WorkStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectRequest;
+use App\Models\User;
+use App\Models\WorkStatus;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-
+use Tests\TestCase;
 
 class AttendanceTest extends TestCase
 {

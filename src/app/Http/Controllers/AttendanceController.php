@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
-use App\Models\AttendanceCorrectRequest;
+use App\Models\Rest;
+use App\Models\WorkStatus;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-use App\Models\WorkStatus;
-use App\Models\Rest;
-use App\Http\Requests\ExemptRequest;
-use App\Models\RestCorrectRequest;
 
 class AttendanceController extends Controller
 {
@@ -109,57 +106,6 @@ class AttendanceController extends Controller
     return redirect()->back()->with('message', '退勤しました。お疲れ様でした！');
   }
 
-  public function restStart()
-  {
-    $user = Auth::user();
-    /** @var \App\Models\User $user */
-    $user->work_status_id = 3;
-    $user->save();
-
-    $today = Carbon::now()->format('Y-m-d');
-    $attendance = Attendance::where('user_id', $user->id)
-      ->whereDate('date', $today)
-      ->whereNull('clock_out')
-      ->first();
-
-    if ($attendance) {
-      Rest::create([
-        'attendance_id' => $attendance->id,
-        'start_time' => Carbon::now()->format('H:i:s'),
-      ]);
-    }
-
-    return redirect()->back();
-  }
-
-  public function restEnd()
-  {
-    $user = Auth::user();
-    /** @var \App\Models\User $user */
-    $user->work_status_id = 2;
-    $user->save();
-
-    $today = Carbon::now()->format('Y-m-d');
-    $attendance = Attendance::where('user_id', $user->id)
-      ->whereDate('date', $today)
-      ->first();
-
-    if ($attendance) {
-      $rest = Rest::where('attendance_id', $attendance->id)
-        ->whereNull('end_time')
-        ->latest()
-        ->first();
-
-      if ($rest) {
-        $rest->update([
-          'end_time' => Carbon::now()->format('H:i:s'),
-        ]);
-      }
-    }
-
-    return redirect()->back();
-  }
-
   public function show($id)
   {
     $attendance = Attendance::with([
@@ -168,63 +114,6 @@ class AttendanceController extends Controller
     ])->findOrFail($id);
 
     return view('attendance.edit', compact('attendance'));
-  }
-
-  public function update(ExemptRequest $request, $id)
-  {
-    $attendance = Attendance::findOrFail($id);
-
-    if (in_array($attendance->correctRequest?->status, [1, 2])) {
-      return redirect()->back()->with('error', 'この申請は現在変更できません');
-    }
-
-    $user = Auth::user();
-    $dateStr = $attendance->date->format('Y-m-d');
-
-    $formatTime = function ($time) use ($dateStr) {
-      if (!$time) return null;
-      $converted = mb_convert_kana($time, 'ka', 'UTF-8');
-      $cleanTime = str_replace(' ', '', $converted);
-      return $dateStr . ' ' . $cleanTime;
-    };
-
-    $application = AttendanceCorrectRequest::updateOrCreate(
-      ['attendance_id' => $id, 'user_id' => $user->id],
-      [
-        'requested_clock_in'  => $formatTime($request->clock_in),
-        'requested_clock_out' => $formatTime($request->clock_out),
-        'reason' => $request->description,
-        'status' => 1,
-      ]
-    );
-
-    if ($request->has('rests')) {
-      foreach ($request->rests as $restId => $restData) {
-        if (!empty($restData['start']) && !empty($restData['end'])) {
-          $application->restCorrectRequests()->updateOrCreate(
-            ['rest_id' => $restId],
-            [
-              'requested_start_time' => $formatTime($restData['start']),
-              'requested_end_time' => $formatTime($restData['end']),
-            ]
-          );
-        }
-      }
-    }
-
-    if ($request->has('new_rests')) {
-      foreach ($request->new_rests as $newRest) {
-        if (!empty($newRest['start']) && !empty($newRest['end'])) {
-          $application->restCorrectRequests()->create([
-            'requested_start_time' => $formatTime($newRest['start']),
-            'requested_end_time' => $formatTime($newRest['end']),
-            'rest_id' => null,
-          ]);
-        }
-      }
-    }
-
-    return redirect()->route('attendance.edit', ['id' => $id])->with('success', '修正申請を出しました');
   }
 
   public function attendanceList(Request $request)
@@ -254,9 +143,13 @@ class AttendanceController extends Controller
     } else {
       $attendances = Attendance::where('user_id', $user->id)
         ->whereBetween('date', [$startOfMonth->format('Y-m-d'), $endOfMonth->format('Y-m-d')])
-        ->with(['correctRequest' => function ($query) {
-          $query->where('status', 1);
-        }])
+        ->with([
+          'rests',
+          'correctRequest' => function ($query) {
+            $query->where('status', 1);
+          },
+          'correctRequest.restCorrectRequests'
+        ])
         ->get()
         ->keyBy(function ($item) {
           return Carbon::parse($item->date)->format('Y-m-d');
@@ -271,24 +164,11 @@ class AttendanceController extends Controller
     ]);
   }
 
-  public function requestList(Request $request)
-  {
-    $user = Auth::user();
-    $tab = $request->query('tab', 'pending');
-    $status = ($tab === 'approved') ? 2 : 1;
-    $applications = AttendanceCorrectRequest::where('user_id', $user->id)
-      ->where('status', $status)
-      ->orderBy('created_at', 'desc')
-      ->get();
-
-    return view('attendance.request_list', compact('applications'));
-  }
-
   public function edit(Request $request, $id = null)
   {
     $date = $request->query('date');
     $user = Auth::user();
-    $attendance = Attendance::where(['rests', 'correctRequest.restCorrectRequests'])
+    $attendance = Attendance::with(['rests', 'correctRequest.restCorrectRequests'])
       ->where('user_id', $user->id)
       ->where('date', $date)
       ->first();

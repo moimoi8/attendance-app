@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\RestCorrectRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\RestCorrectRequest;
 
 class AttendanceCorrectRequest extends Model
 {

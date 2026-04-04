@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class Attendance extends Model
 {
@@ -37,9 +37,19 @@ class Attendance extends Model
   public function getTotalRestTimeAttribute()
   {
     $totalMinutes = 0;
-    foreach ($this->rests as $rest) {
-      if ($rest->start_time && $rest->end_time) {
-        $totalMinutes += $rest->start_time->diffInMinutes($rest->end_time);
+    if ($this->correctRequest && $this->correctRequest->status == 1) {
+      foreach ($this->correctRequest->restCorrectRequests as $restReq) {
+        $start = Carbon::parse($restReq->requested_start_time);
+        $end = Carbon::parse($restReq->requested_end_time);
+        $totalMinutes += $start->diffInMinutes($end);
+      }
+    } else {
+      foreach ($this->rests as $rest) {
+        if ($rest->start_time && $rest->end_time) {
+          $start = Carbon::parse($rest->start_time);
+          $end = Carbon::parse($rest->end_time);
+          $totalMinutes += $start->diffInMinutes($end);
+        }
       }
     }
     $hours = floor($totalMinutes / 60);
@@ -49,17 +59,37 @@ class Attendance extends Model
 
   public function getTotalWorkTimeAttribute()
   {
-    if (!$this->clock_in || !$this->clock_out) {
+    if ($this->correctRequest && $this->correctRequest->status == 1) {
+      $clockIn = Carbon::parse($this->correctRequest->requested_clock_in);
+      $clockOut = Carbon::parse($this->correctRequest->requested_clock_out);
+    } else {
+      $clockIn = $this->clock_in;
+      $clockOut = $this->clock_out;
+    }
+
+    if (!$clockIn || !$clockOut) {
       return '00:00';
     }
-    $totalMinutes = $this->clock_in->diffInMinutes($this->clock_out);
+
+    $totalMinutes = $clockIn->diffInMinutes($clockOut);
 
     $restMinutes = 0;
-    foreach ($this->rests as $rest) {
-      if ($rest->start_time && $rest->end_time) {
-        $restMinutes += $rest->start_time->diffInMinutes($rest->end_time);
+    if ($this->correctRequest && $this->correctRequest->status == 1) {
+      foreach ($this->correctRequest->restCorrectRequests as $restReq) {
+        $start = Carbon::parse($restReq->requested_start_time);
+        $end = Carbon::parse($restReq->requested_end_time);
+        $restMinutes += $start->diffInMinutes($end);
+      }
+    } else {
+      foreach ($this->rests as $rest) {
+        if ($rest->start_time && $rest->end_time) {
+          $start = Carbon::parse($rest->start_time);
+          $end = Carbon::parse($rest->end_time);
+          $restMinutes += $start->diffInMinutes($end);
+        }
       }
     }
+
     $workMinutes = $totalMinutes - $restMinutes;
     if ($workMinutes < 0) $workMinutes = 0;
 

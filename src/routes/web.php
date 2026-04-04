@@ -1,8 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ApproveController;
+use App\Http\Controllers\AttendanceCorrectRequestController;
+use App\Http\Controllers\RestController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,11 +37,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/attendance/staff/{id}', [AdminController::class, 'userAttendance'])->name('admin.attendance.staff');
 
-    Route::get('/stamp_correction_request/list', [AdminController::class, 'approveList'])->name('admin.approve.list');
+    Route::get('/stamp_correction_request/list', [ApproveController::class, 'approveList'])->name('admin.approve.list');
 
-    Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminController::class, 'approveShow'])->name('admin.approve.request_detail');
+    Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [ApproveController::class, 'approveShow'])->name('admin.approve.request_detail');
 
-    Route::patch('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminController::class, 'approveUpdate'])->name('admin.approve.update');
+    Route::patch('/stamp_correction_request/approve/{attendance_correct_request_id}', [ApproveController::class, 'approveUpdate'])->name('admin.approve.update');
 
     Route::patch('/attendance/update/{id}', [AdminController::class, 'update'])->name('admin.attendance.update');
 
@@ -54,15 +57,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
   Route::post('attendance/end', [AttendanceController::class, 'end'])->name('attendance.end');
 
-  Route::post('/rest/start', [AttendanceController::class, 'restStart'])->name('rest.start');
+  Route::post('/rest/start', [RestController::class, 'restStart'])->name('rest.start');
 
-  Route::post('/rest/end', [AttendanceController::class, 'restEnd'])->name('rest.end');
+  Route::post('/rest/end', [RestController::class, 'restEnd'])->name('rest.end');
 
   Route::get('/attendance/list', [AttendanceController::class, 'attendanceList'])->name('attendance.list');
 
   Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])->name('attendance.edit');
 
-  Route::get('/stamp_correction_request/list', [AttendanceController::class, 'requestList'])->name('attendance.request_list');
+  Route::get('/stamp_correction_request/list', [AttendanceCorrectRequestController::class, 'requestList'])->name('attendance.request_list');
 
-  Route::patch('/attendance/update/{id}', [AttendanceController::class, 'update'])->name('attendance.update');
+  Route::patch('/attendance/update/{id}', [AttendanceCorrectRequestController::class, 'update'])->name('attendance.update');
 });

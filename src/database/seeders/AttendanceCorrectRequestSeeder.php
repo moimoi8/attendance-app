@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\AttendanceCorrectRequest;
+use Illuminate\Database\Seeder;
 
 class AttendanceCorrectRequestSeeder extends Seeder
 {
