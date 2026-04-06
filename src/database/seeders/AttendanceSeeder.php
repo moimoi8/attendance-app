@@ -22,11 +22,16 @@ class AttendanceSeeder extends Seeder
       $date = Carbon::today()->subDays($days);
 
       foreach ($users as $user) {
-        Attendance::factory()->create([
+        $attendance = Attendance::factory()->create([
           'user_id' => $user->id,
           'date' => $date->format('Y-m-d'),
           'clock_in' => $date->copy()->setTime(rand(8, 10), rand(0, 59)),
           'clock_out' => $date->copy()->setTime(rand(17, 19), rand(0, 59)),
+        ]);
+
+        $attendance->rests()->create([
+          'start_time' => $date->copy()->setTime(12, 00),
+          'end_time' => $date->copy()->setTime(13, 00),
         ]);
       }
     }
